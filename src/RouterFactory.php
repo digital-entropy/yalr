@@ -3,6 +3,7 @@
 namespace Jalameta\Router;
 
 use RuntimeException;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 /**
@@ -12,6 +13,13 @@ use Illuminate\Support\Collection;
  */
 class RouterFactory
 {
+    /**
+     * Laravel router
+     *
+     * @var \Illuminate\Routing\Router
+     */
+    protected $router;
+
     /**
      * Route groups.
      *
@@ -25,6 +33,16 @@ class RouterFactory
      * @var array
      */
     protected $options = [];
+
+    /**
+     * RouterFactory constructor.
+     *
+     * @param \Illuminate\Routing\Router $router
+     */
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
 
     /**
      * Create new route group.
@@ -46,6 +64,34 @@ class RouterFactory
         $this->options[$key] = $options;
 
         return $this->get($key);
+    }
+
+    /**
+     * Register to route group
+     *
+     * @return void
+     */
+    public function register()
+    {
+        foreach ($this->groups() as $group) {
+            $this->map($group);
+        }
+    }
+
+    /**
+     * Map all routes into laravel routes
+     *
+     * @param $group
+     *
+     * @return void
+     */
+    public function map($group)
+    {
+        $this->router->group($this->getOptions($group), function() use ($group) {
+            foreach ($this->get($group) as $item) {
+                $item::bind();
+            }
+        });
     }
 
     /**
@@ -73,6 +119,16 @@ class RouterFactory
         }
 
         throw new RuntimeException("Route Group with key: `$key` doesn't exists.");
+    }
+
+    /**
+     * List of all registered route groups
+     *
+     * @return array
+     */
+    public function groups()
+    {
+        return array_keys($this->routes);
     }
 
     /**
