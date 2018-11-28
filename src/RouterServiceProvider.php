@@ -39,8 +39,7 @@ class RouterServiceProvider extends ServiceProvider
 
             $routes = config('routes.groups');
 
-            foreach ($routes as $k => $v)
-            {
+            foreach ($routes as $k => $v) {
                 $factory->make($k, $v, config('routes.' . $k));
             }
 
@@ -50,7 +49,8 @@ class RouterServiceProvider extends ServiceProvider
         $this->app->alias('jps.routing', RouterFactory::class);
 
         $this->commands([
-            Console\InstallCommand::class
+            Console\InstallCommand::class,
+            Console\MakeCommand::class
         ]);
     }
 
