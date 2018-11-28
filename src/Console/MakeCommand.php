@@ -39,7 +39,7 @@ class MakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/../stubs/route.stub';
+        return __DIR__.'/../../stubs/route.stub';
     }
 
     /**
