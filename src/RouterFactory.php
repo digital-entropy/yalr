@@ -16,7 +16,7 @@ class RouterFactory
     /**
      * Laravel router
      *
-     * @var \Illuminate\Routing\Router
+     * @var \Illuminate\Routing\Router|\Laravel\Lumen\Routing\Router
      */
     protected $router;
 
@@ -37,9 +37,9 @@ class RouterFactory
     /**
      * RouterFactory constructor.
      *
-     * @param \Illuminate\Routing\Router $router
+     * @param \Illuminate\Routing\Router|\Laravel\Lumen\Routing\Router $router
      */
-    public function __construct(Router $router)
+    public function __construct($router)
     {
         $this->router = $router;
     }
