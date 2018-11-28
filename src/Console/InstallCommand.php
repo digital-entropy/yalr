@@ -17,14 +17,14 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'jps-router:install {--remove}';
+    protected $signature = 'jps:routes {--install} {--remove}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Install JPS router in favor of original laravel router';
+    protected $description = 'Manage JPS router in favor of original laravel router';
 
     /**
      * Laravel filesystem
@@ -52,6 +52,44 @@ class InstallCommand extends Command
      */
     public function handle()
     {
+        if ($this->wantInstall())
+        {
+            $this->install();
+        } else {
+            $this->displayRoutes();
+        }
+    }
+
+    /**
+     * Display all registered routes in JPS container
+     *
+     * @return void
+     */
+    protected function displayRoutes()
+    {
+        $routes = app('jps.router')->all();
+        $rows = [];
+
+        foreach ($routes as $group => $classes)
+        {
+            foreach ($classes as $class)
+            {
+                $rows[] = [
+                    $class, $group
+                ];
+            }
+        }
+
+        $this->table(['Route Class', 'Group'], $rows);
+    }
+
+    /**
+     * Install JPS router
+     *
+     * @return void
+     */
+    protected function install()
+    {
         $this->comment("Publishing JPS Router config file..");
         $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
 
@@ -61,6 +99,16 @@ class InstallCommand extends Command
         ) {
             $this->removeLaravelRoute();
         }
+    }
+
+    /**
+     * Determine if user want to install the package
+     *
+     * @return bool
+     */
+    protected function wantInstall()
+    {
+        return is_null($this->option('install')) === false;
     }
 
     /**
