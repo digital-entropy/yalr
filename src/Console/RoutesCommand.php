@@ -95,6 +95,9 @@ class RoutesCommand extends Command
 
         if ($this->runningInLumen())
         {
+            if ($this->filesystem->exists(base_path('config')) === false)
+                $this->filesystem->makeDirectory(base_path('config'));
+            
             $this->filesystem->copy(__DIR__.'/../../config/routes.php', base_path('config/routes.php'));
         } else {
             $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
