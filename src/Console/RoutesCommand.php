@@ -2,6 +2,7 @@
 
 namespace Jalameta\Router\Console;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
@@ -91,7 +92,13 @@ class RoutesCommand extends Command
     protected function install()
     {
         $this->comment("Publishing JPS Router config file..");
-        $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
+
+        if ($this->runningInLumen())
+        {
+            $this->filesystem->copy(__DIR__.'/../../config/routes.php', base_path('config/routes.php'));
+        } else {
+            $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
+        }
 
         if (
             $this->option('remove')
@@ -99,6 +106,16 @@ class RoutesCommand extends Command
         ) {
             $this->removeLaravelRoute();
         }
+    }
+
+    /**
+     * Determine if application is running on lumen
+     *
+     * @return bool
+     */
+    protected function runningInLumen()
+    {
+        return Str::contains(app()->version(), 'Lumen');
     }
 
     /**
