@@ -131,8 +131,8 @@ class RoutesCommand extends Command
 
         // remove RouteServiceProvider from config/app.php
         $stream =  preg_replace(
-            '/App\\Providers\\RouteServiceProvider::class,/m',
-            '// App\\Providers\\RouteServiceProvider::class,',
+            '/App\\\Providers\\\RouteServiceProvider\:\:class\,/m',
+            '// App\\\Providers\\\RouteServiceProvider::class,',
             file_get_contents(config_path('app.php'))
         );
         file_put_contents(config_path('app.php'), $stream);
