@@ -67,7 +67,7 @@ class RoutesCommand extends Command
      */
     protected function displayRoutes()
     {
-        $routes = app('jps.router')->all();
+        $routes = app('jps.routing')->all();
         $rows = [];
 
         foreach ($routes as $group => $classes)
