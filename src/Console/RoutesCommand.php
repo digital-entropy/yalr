@@ -124,7 +124,7 @@ class RoutesCommand extends Command
         // remove explicit `require` in `app/Console/Kernel.php`
         $stream =  preg_replace(
             '/require base_path\(\'routes\/console\.php\'\);/m',
-            '\/\/ require base_path(\'routes/console.php\');',
+            '// require base_path(\'routes/console.php\');',
             file_get_contents(app_path('Console/Kernel.php'))
         );
         file_put_contents(app_path('Console/Kernel.php'), $stream);
@@ -132,7 +132,7 @@ class RoutesCommand extends Command
         // and once more in `app/Providers/BroadcastServiceProvider.php`
         $stream =  preg_replace(
             '/require base_path\(\'routes\/channels\.php\'\);/m',
-            '\/\/ require base_path(\'routes/channels.php\');',
+            '// require base_path(\'routes/channels.php\');',
             file_get_contents(app_path('Providers/BroadcastServiceProvider.php'))
         );
         file_put_contents(app_path('Providers/BroadcastServiceProvider.php'), $stream);
