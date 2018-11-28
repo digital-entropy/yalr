@@ -97,7 +97,7 @@ class RoutesCommand extends Command
         {
             if ($this->filesystem->exists(base_path('config')) === false)
                 $this->filesystem->makeDirectory(base_path('config'));
-            
+
             $this->filesystem->copy(__DIR__.'/../../config/routes.php', base_path('config/routes.php'));
         } else {
             $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
@@ -153,7 +153,7 @@ class RoutesCommand extends Command
             '// require base_path(\'routes/console.php\');',
             file_get_contents(base_path('app/Console/Kernel.php'))
         );
-        file_put_contents(base_path('Console/Kernel.php'), $stream);
+        file_put_contents(base_path('app/Console/Kernel.php'), $stream);
         $this->comment("`app/Providers/RouteServiceProvider.php` has been modified!");
 
         // remove RouteServiceProvider from config/app.php
