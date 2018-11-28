@@ -30,7 +30,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Route class';
+    protected $type = 'Route';
 
     /**
      * Get the stub file for the generator.
@@ -51,6 +51,6 @@ class MakeCommand extends GeneratorCommand
      */
     public function getDefaultNamespace($rootNameSpace)
     {
-        return $rootNameSpace.'Http\Routes';
+        return $rootNameSpace.'\Http\Routes';
     }
 }
