@@ -17,7 +17,7 @@ class RoutesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'jps:routes {--install :Install JPS router in favor of laravel routes} {--remove : Remove default laravel routes installation, only work with install command.}';
+    protected $signature = 'jps:routes {--install : Install JPS router in favor of laravel routes} {--remove : Remove default laravel routes installation, only work with install option}';
 
     /**
      * The console command description.
