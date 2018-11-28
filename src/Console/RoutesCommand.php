@@ -129,6 +129,14 @@ class RoutesCommand extends Command
         );
         file_put_contents(app_path('Console/Kernel.php'), $stream);
 
+        // remove RouteServiceProvider from config/app.php
+        $stream =  preg_replace(
+            '/App\\Providers\\RouteServiceProvider::class,/m',
+            '// App\\Providers\\RouteServiceProvider::class,',
+            file_get_contents(config_path('app.php'))
+        );
+        file_put_contents(config_path('app.php'), $stream);
+
         // and once more in `app/Providers/BroadcastServiceProvider.php`
         $stream =  preg_replace(
             '/require base_path\(\'routes\/channels\.php\'\);/m',
