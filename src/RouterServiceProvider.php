@@ -53,7 +53,7 @@ class RouterServiceProvider extends ServiceProvider
         $this->app->alias('jps.routing', RouterFactory::class);
 
         $this->commands([
-            Console\InstallCommand::class,
+            Console\RoutesCommand::class,
             Console\MakeCommand::class
         ]);
     }

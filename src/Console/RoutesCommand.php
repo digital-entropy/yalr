@@ -10,7 +10,7 @@ use Illuminate\Filesystem\Filesystem;
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-class InstallCommand extends Command
+class RoutesCommand extends Command
 {
     /**
      * The name and signature of the console command.
