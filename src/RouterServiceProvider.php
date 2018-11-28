@@ -34,6 +34,10 @@ class RouterServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/routes.php', 'routes'
+        );
+
         $this->app->singleton('jps.routing', function ($app) {
             $factory = new RouterFactory($app->router);
 
