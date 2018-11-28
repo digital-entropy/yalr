@@ -119,30 +119,46 @@ class RoutesCommand extends Command
     protected function removeLaravelRoute()
     {
         $this->filesystem->deleteDirectory(base_path('routes'));
-        $this->filesystem->delete(app_path('Providers/RouteServiceProvider.php'));
+        $this->comment("`routes` directory has been deleted!");
+
+        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider/php')))
+        {
+            $this->filesystem->delete(base_path('app/Providers/RouteServiceProvider.php'));
+            $this->comment("`app/Providers/RouteServiceProvider.php` file has been deleted!");
+        }
 
         // remove explicit `require` in `app/Console/Kernel.php`
         $stream =  preg_replace(
             '/require base_path\(\'routes\/console\.php\'\);/m',
             '// require base_path(\'routes/console.php\');',
-            file_get_contents(app_path('Console/Kernel.php'))
+            file_get_contents(base_path('app/Console/Kernel.php'))
         );
-        file_put_contents(app_path('Console/Kernel.php'), $stream);
+        file_put_contents(base_path('Console/Kernel.php'), $stream);
+        $this->comment("`app/Providers/RouteServiceProvider.php` has been modified!");
 
         // remove RouteServiceProvider from config/app.php
-        $stream =  preg_replace(
-            '/App\\\Providers\\\RouteServiceProvider\:\:class\,/m',
-            '// App\\\Providers\\\RouteServiceProvider::class,',
-            file_get_contents(config_path('app.php'))
-        );
-        file_put_contents(config_path('app.php'), $stream);
+        if ($this->filesystem->exists(base_path('config/app.php')))
+        {
+            $stream =  preg_replace(
+                '/App\\\Providers\\\RouteServiceProvider\:\:class\,/m',
+                '// App\\\Providers\\\RouteServiceProvider::class,',
+                file_get_contents(base_path('config/app.php'))
+            );
+            file_put_contents(base_path('config/app.php'), $stream);
+            $this->comment("`config/app.php` has been modified!");
+        }
 
         // and once more in `app/Providers/BroadcastServiceProvider.php`
-        $stream =  preg_replace(
-            '/require base_path\(\'routes\/channels\.php\'\);/m',
-            '// require base_path(\'routes/channels.php\');',
-            file_get_contents(app_path('Providers/BroadcastServiceProvider.php'))
-        );
-        file_put_contents(app_path('Providers/BroadcastServiceProvider.php'), $stream);
+        if ($this->filesystem->exists(base_path('app/Providers/BroadcastServiceProvider.php')))
+        {
+            $stream =  preg_replace(
+                '/require base_path\(\'routes\/channels\.php\'\);/m',
+                '// require base_path(\'routes/channels.php\');',
+                file_get_contents(base_path('app/Providers/BroadcastServiceProvider.php'))
+            );
+            file_put_contents(base_path('app/Providers/BroadcastServiceProvider.php'), $stream);
+            $this->comment("`app/Providers/BroadcastServiceProvider.php` has been modified!");
+        }
+
     }
 }

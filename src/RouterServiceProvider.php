@@ -20,7 +20,7 @@ class RouterServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/routes.php' => config_path('routes.php')
+                __DIR__ . '/../config/routes.php' => base_path('config/routes.php')
             ], 'jps-router-config');
         }
 
