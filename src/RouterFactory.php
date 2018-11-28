@@ -87,11 +87,12 @@ class RouterFactory
      */
     public function map($group)
     {
-        $this->router->group($this->getOptions($group), function() use ($group) {
-            foreach ($this->get($group) as $item) {
-                $item::bind();
-            }
-        });
+        if (array_key_exists($group, $this->routes))
+            $this->router->group($this->getOptions($group), function() use ($group) {
+                foreach ($this->get($group) as $item) {
+                    $item::bind();
+                }
+            });
     }
 
     /**
