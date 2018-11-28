@@ -17,7 +17,7 @@ class RoutesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'jps:routes {--install} {--remove}';
+    protected $signature = 'jps:routes {--install :Install JPS router in favor of laravel routes} {--remove : Remove default laravel routes installation, only work with install command.}';
 
     /**
      * The console command description.
@@ -94,7 +94,7 @@ class RoutesCommand extends Command
         $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
 
         if (
-            is_null($this->option('remove')) === false
+            $this->option('remove')
             AND $this->confirm("WARNING: Are you sure you want to remove default laravel route file?")
         ) {
             $this->removeLaravelRoute();
@@ -108,7 +108,7 @@ class RoutesCommand extends Command
      */
     protected function wantInstall()
     {
-        return is_null($this->option('install')) === false;
+        return $this->option('install');
     }
 
     /**
