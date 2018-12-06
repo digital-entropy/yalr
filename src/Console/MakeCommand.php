@@ -3,6 +3,7 @@
 namespace Jalameta\Router\Console;
 
 use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Make Command
@@ -52,5 +53,44 @@ class MakeCommand extends GeneratorCommand
     public function getDefaultNamespace($rootNameSpace)
     {
         return $rootNameSpace.'\Http\Routes';
+    }
+
+    /**
+     * Build the class with the given name.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function buildClass($name)
+    {
+
+        if ($this->option('controller'))
+            $this->buildController($name);
+        
+        return parent::buildClass($name);
+    }
+
+    /**
+     * Build controller
+     *
+     * @param $name
+     */
+    protected function buildController($name)
+    {
+        $controller = str_replace($this->type, 'Controller', $name);
+
+        $this->call('make:controller', ['name' => $controller]);
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            [ 'controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.']
+        ];
     }
 }
