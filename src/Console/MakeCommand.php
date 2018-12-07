@@ -72,34 +72,46 @@ class MakeCommand extends GeneratorCommand
     protected function buildClass($name)
     {
         if ($this->option('controller')) {
-            $this->buildController($name);
+            $this->buildController();
 
-            return str_replace(['DummyController'], [$this->getControllerClass($name)], parent::buildClass($name));
+            return str_replace(
+                [
+                    'DummyRootNamespace',
+                    'DummyControllerName',
+                    'DummyController',
+                ], [
+                    $this->rootNamespace(),
+                    str_replace($this->type, 'Controller', $name),
+                    $this->getControllerClassname(),
+                ], parent::buildClass($name)
+            );
         }
 
         return parent::buildClass($name);
     }
 
     /**
-     * Build controller.
+     * Generate new controller class.
      *
-     * @param $name
+     * @return void
      */
-    protected function buildController($name)
+    protected function buildController()
     {
-        $this->call('make:controller', ['name' => $this->getControllerClass($name)]);
+        $this->call('make:controller', [
+            'name' => str_replace($this->type, 'Controller', $this->getNameInput()),
+        ]);
     }
 
     /**
-     * Get Controller class name.
+     * Get Controller class name without namespace.
      *
-     * @param $name
-     *
-     * @return mixed
+     * @return string
      */
-    protected function getControllerClass($name)
+    protected function getControllerClassname()
     {
-        return str_replace($this->type, 'Controller', $name);
+        $class = str_replace($this->getNamespace($this->getNameInput()).'\\', '', $this->getNameInput());
+
+        return str_replace($this->type, 'Controller', $class);
     }
 
     /**
