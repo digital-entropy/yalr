@@ -54,8 +54,7 @@ class MakeCommand extends GeneratorCommand
     {
         $stub = null;
 
-        if ($this->option('controller'))
-        {
+        if ($this->option('controller')) {
             $stub = '/../../stubs/route.controller.stub';
         } else {
             $stub = '/../../stubs/route.stub';
@@ -92,7 +91,7 @@ class MakeCommand extends GeneratorCommand
     }
 
     /**
-     * Get Controller class name
+     * Get Controller class name.
      *
      * @param $name
      *
