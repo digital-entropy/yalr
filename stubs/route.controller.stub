@@ -3,7 +3,6 @@
 namespace DummyNamespace;
 
 use Jalameta\Router\BaseRoute;
-use DummyRootNamespaceHttp\Controllers\DummyController;
 
 class DummyClass extends BaseRoute
 {
@@ -24,6 +23,6 @@ class DummyClass extends BaseRoute
      */
     public function controller()
     {
-        return DummyController::class;
+        return \DummyController::class;
     }
 }
