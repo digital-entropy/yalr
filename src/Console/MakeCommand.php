@@ -66,7 +66,7 @@ class MakeCommand extends GeneratorCommand
 
         if ($this->option('controller'))
             $this->buildController($name);
-        
+
         return parent::buildClass($name);
     }
 
