@@ -52,7 +52,16 @@ class MakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/../../stubs/route.stub';
+        $stub = null;
+
+        if ($this->option('controller'))
+        {
+            $stub = '/../../stubs/route.controller.stub';
+        } else {
+            $stub = '/../../stubs/route.stub';
+        }
+
+        return __DIR__.$stub;
     }
 
     /**
@@ -65,6 +74,8 @@ class MakeCommand extends GeneratorCommand
     {
         if ($this->option('controller')) {
             $this->buildController($name);
+
+            return str_replace(['DummyController'], [$this->getControllerClass($name)], parent::buildClass($name));
         }
 
         return parent::buildClass($name);
@@ -77,9 +88,19 @@ class MakeCommand extends GeneratorCommand
      */
     protected function buildController($name)
     {
-        $controller = str_replace($this->type, 'Controller', $name);
+        $this->call('make:controller', ['name' => $this->getControllerClass($name)]);
+    }
 
-        $this->call('make:controller', ['name' => $controller]);
+    /**
+     * Get Controller class name
+     *
+     * @param $name
+     *
+     * @return mixed
+     */
+    protected function getControllerClass($name)
+    {
+        return str_replace($this->type, 'Controller', $name);
     }
 
     /**

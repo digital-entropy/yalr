@@ -1,0 +1,29 @@
+<?php
+
+namespace DummyNamespace;
+
+use Jalameta\Router\BaseRoute;
+use DummyRootNamespaceHttp\Controllers\DummyController;
+
+class DummyClass extends BaseRoute
+{
+    /**
+     * Register routes handled by this class.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        // make an awesome route
+    }
+
+    /**
+     * Register routes handled by this class.
+     *
+     * @return void
+     */
+    public function controller()
+    {
+        return DummyController::class;
+    }
+}
