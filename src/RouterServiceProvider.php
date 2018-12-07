@@ -5,7 +5,7 @@ namespace Jalameta\Router;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Router service provider
+ * Router service provider.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
@@ -20,7 +20,7 @@ class RouterServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/routes.php' => base_path('config/routes.php')
+                __DIR__.'/../config/routes.php' => base_path('config/routes.php'),
             ], 'jps-router-config');
         }
 
@@ -44,7 +44,7 @@ class RouterServiceProvider extends ServiceProvider
             $routes = config('routes.groups');
 
             foreach ($routes as $k => $v) {
-                $factory->make($k, $v, config('routes.' . $k));
+                $factory->make($k, $v, config('routes.'.$k));
             }
 
             return $factory;
@@ -54,19 +54,19 @@ class RouterServiceProvider extends ServiceProvider
 
         $this->commands([
             Console\RoutesCommand::class,
-            Console\MakeCommand::class
+            Console\MakeCommand::class,
         ]);
     }
 
     /**
-     * Register all routes in application container
+     * Register all routes in application container.
      *
      * @return void
      */
     private function registerRoutes()
     {
         /**
-         * @var \Jalameta\Router\RouterFactory $router
+         * @var \Jalameta\Router\RouterFactory
          */
         $router = $this->app['jps.routing'];
 

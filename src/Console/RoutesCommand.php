@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
 /**
- * Route Installer
+ * Route Installer.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
@@ -28,7 +28,7 @@ class RoutesCommand extends Command
     protected $description = 'Manage JPS router in favor of original laravel router';
 
     /**
-     * Laravel filesystem
+     * Laravel filesystem.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
@@ -53,8 +53,7 @@ class RoutesCommand extends Command
      */
     public function handle()
     {
-        if ($this->wantInstall())
-        {
+        if ($this->wantInstall()) {
             $this->install();
         } else {
             $this->displayRoutes();
@@ -62,7 +61,7 @@ class RoutesCommand extends Command
     }
 
     /**
-     * Display all registered routes in JPS container
+     * Display all registered routes in JPS container.
      *
      * @return void
      */
@@ -71,12 +70,10 @@ class RoutesCommand extends Command
         $routes = app('jps.routing')->all();
         $rows = [];
 
-        foreach ($routes as $group => $classes)
-        {
-            foreach ($classes as $class)
-            {
+        foreach ($routes as $group => $classes) {
+            foreach ($classes as $class) {
                 $rows[] = [
-                    $class, $group
+                    $class, $group,
                 ];
             }
         }
@@ -85,34 +82,34 @@ class RoutesCommand extends Command
     }
 
     /**
-     * Install JPS router
+     * Install JPS router.
      *
      * @return void
      */
     protected function install()
     {
-        $this->comment("Publishing JPS Router config file..");
+        $this->comment('Publishing JPS Router config file..');
 
-        if ($this->runningInLumen())
-        {
-            if ($this->filesystem->exists(base_path('config')) === false)
+        if ($this->runningInLumen()) {
+            if ($this->filesystem->exists(base_path('config')) === false) {
                 $this->filesystem->makeDirectory(base_path('config'));
+            }
 
             $this->filesystem->copy(__DIR__.'/../../config/routes.php', base_path('config/routes.php'));
         } else {
-            $this->callSilent("vendor:publish", [ "--tag" => 'jps-router-config']);
+            $this->callSilent('vendor:publish', ['--tag' => 'jps-router-config']);
         }
 
         if (
             $this->option('remove')
-            AND $this->confirm("WARNING: Are you sure you want to remove default laravel route file?")
+            and $this->confirm('WARNING: Are you sure you want to remove default laravel route file?')
         ) {
             $this->removeLaravelRoute();
         }
     }
 
     /**
-     * Determine if application is running on lumen
+     * Determine if application is running on lumen.
      *
      * @return bool
      */
@@ -122,7 +119,7 @@ class RoutesCommand extends Command
     }
 
     /**
-     * Determine if user want to install the package
+     * Determine if user want to install the package.
      *
      * @return bool
      */
@@ -132,53 +129,49 @@ class RoutesCommand extends Command
     }
 
     /**
-     * Remove laravel default route
+     * Remove laravel default route.
      *
      * @return void
      */
     protected function removeLaravelRoute()
     {
         $this->filesystem->deleteDirectory(base_path('routes'));
-        $this->comment("`routes` directory has been deleted!");
+        $this->comment('`routes` directory has been deleted!');
 
-        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider/php')))
-        {
+        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider/php'))) {
             $this->filesystem->delete(base_path('app/Providers/RouteServiceProvider.php'));
-            $this->comment("`app/Providers/RouteServiceProvider.php` file has been deleted!");
+            $this->comment('`app/Providers/RouteServiceProvider.php` file has been deleted!');
         }
 
         // remove explicit `require` in `app/Console/Kernel.php`
-        $stream =  preg_replace(
+        $stream = preg_replace(
             '/require base_path\(\'routes\/console\.php\'\);/m',
             '// require base_path(\'routes/console.php\');',
             file_get_contents(base_path('app/Console/Kernel.php'))
         );
         file_put_contents(base_path('app/Console/Kernel.php'), $stream);
-        $this->comment("`app/Providers/RouteServiceProvider.php` has been modified!");
+        $this->comment('`app/Providers/RouteServiceProvider.php` has been modified!');
 
         // remove RouteServiceProvider from config/app.php
-        if ($this->filesystem->exists(base_path('config/app.php')))
-        {
-            $stream =  preg_replace(
+        if ($this->filesystem->exists(base_path('config/app.php'))) {
+            $stream = preg_replace(
                 '/App\\\Providers\\\RouteServiceProvider\:\:class\,/m',
                 '// App\\\Providers\\\RouteServiceProvider::class,',
                 file_get_contents(base_path('config/app.php'))
             );
             file_put_contents(base_path('config/app.php'), $stream);
-            $this->comment("`config/app.php` has been modified!");
+            $this->comment('`config/app.php` has been modified!');
         }
 
         // and once more in `app/Providers/BroadcastServiceProvider.php`
-        if ($this->filesystem->exists(base_path('app/Providers/BroadcastServiceProvider.php')))
-        {
-            $stream =  preg_replace(
+        if ($this->filesystem->exists(base_path('app/Providers/BroadcastServiceProvider.php'))) {
+            $stream = preg_replace(
                 '/require base_path\(\'routes\/channels\.php\'\);/m',
                 '// require base_path(\'routes/channels.php\');',
                 file_get_contents(base_path('app/Providers/BroadcastServiceProvider.php'))
             );
             file_put_contents(base_path('app/Providers/BroadcastServiceProvider.php'), $stream);
-            $this->comment("`app/Providers/BroadcastServiceProvider.php` has been modified!");
+            $this->comment('`app/Providers/BroadcastServiceProvider.php` has been modified!');
         }
-
     }
 }

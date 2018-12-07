@@ -7,14 +7,14 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 
 /**
- * Router Factory
+ * Router Factory.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
 class RouterFactory
 {
     /**
-     * Laravel router
+     * Laravel router.
      *
      * @var \Illuminate\Routing\Router|\Laravel\Lumen\Routing\Router
      */
@@ -67,7 +67,7 @@ class RouterFactory
     }
 
     /**
-     * Register to route group
+     * Register to route group.
      *
      * @return void
      */
@@ -79,7 +79,7 @@ class RouterFactory
     }
 
     /**
-     * Map all routes into laravel routes
+     * Map all routes into laravel routes.
      *
      * @param $group
      *
@@ -87,12 +87,13 @@ class RouterFactory
      */
     public function map($group)
     {
-        if (array_key_exists($group, $this->routes))
-            $this->router->group($this->getOptions($group), function() use ($group) {
+        if (array_key_exists($group, $this->routes)) {
+            $this->router->group($this->getOptions($group), function () use ($group) {
                 foreach ($this->get($group) as $item) {
                     $item::bind();
                 }
             });
+        }
     }
 
     /**
@@ -123,7 +124,7 @@ class RouterFactory
     }
 
     /**
-     * List of all registered route groups
+     * List of all registered route groups.
      *
      * @return array
      */

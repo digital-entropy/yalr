@@ -6,7 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Make Command
+ * Make Command.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
@@ -34,16 +34,6 @@ class MakeCommand extends GeneratorCommand
     protected $type = 'Route';
 
     /**
-     * Get the stub file for the generator.
-     *
-     * @return string
-     */
-    protected function getStub()
-    {
-        return __DIR__.'/../../stubs/route.stub';
-    }
-
-    /**
      * Get the default namespace for the class.
      *
      * @param $rootNameSpace
@@ -56,6 +46,16 @@ class MakeCommand extends GeneratorCommand
     }
 
     /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        return __DIR__.'/../../stubs/route.stub';
+    }
+
+    /**
      * Build the class with the given name.
      *
      * @param  string  $name
@@ -63,15 +63,15 @@ class MakeCommand extends GeneratorCommand
      */
     protected function buildClass($name)
     {
-
-        if ($this->option('controller'))
+        if ($this->option('controller')) {
             $this->buildController($name);
+        }
 
         return parent::buildClass($name);
     }
 
     /**
-     * Build controller
+     * Build controller.
      *
      * @param $name
      */
@@ -90,7 +90,7 @@ class MakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            [ 'controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.']
+            ['controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.'],
         ];
     }
 }

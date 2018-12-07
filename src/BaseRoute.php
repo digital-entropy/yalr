@@ -6,7 +6,7 @@ use RuntimeException;
 use Jalameta\Router\Contracts\Binder;
 
 /**
- * Base router class
+ * Base router class.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
@@ -120,5 +120,4 @@ abstract class BaseRoute implements Binder
 
         return $this->name.'.'.$suffix;
     }
-
 }

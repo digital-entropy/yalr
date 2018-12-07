@@ -1,6 +1,6 @@
 <?php
 /**
- * Router configuration
+ * Router configuration.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
@@ -9,12 +9,12 @@ return [
     'groups' => [
         'web' => [
             'middleware' => 'web',
-            'prefix' => ''
+            'prefix' => '',
         ],
         'api' => [
             'middleware' => 'api',
-            'prefix' => 'api'
-        ]
+            'prefix' => 'api',
+        ],
     ],
 
     'web' => [
@@ -22,5 +22,5 @@ return [
     ],
     'api' => [
 
-    ]
+    ],
 ];
