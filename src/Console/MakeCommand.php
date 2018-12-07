@@ -81,7 +81,7 @@ class MakeCommand extends GeneratorCommand
                     'DummyController',
                 ], [
                     $this->rootNamespace(),
-                    str_replace($this->type, 'Controller', $name),
+                    str_replace($this->type, 'Controller', $this->getNameInput()),
                     $this->getControllerClassname(),
                 ], parent::buildClass($name)
             );
