@@ -18,9 +18,9 @@ return [
     ],
 
     'web' => [
-
+        /** @inject web **/
     ],
     'api' => [
-
+        /** @inject api **/
     ],
 ];
