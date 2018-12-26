@@ -46,6 +46,17 @@ class MakeCommand extends GeneratorCommand
     }
 
     /**
+     * Execute the console command.
+     *
+     * @return bool|null
+     */
+    public function handle()
+    {
+        return parent::handle();
+    }
+
+
+    /**
      * Get the stub file for the generator.
      *
      * @return string
@@ -71,6 +82,8 @@ class MakeCommand extends GeneratorCommand
      */
     protected function buildClass($name)
     {
+        $this->injectRouteClass();
+
         if ($this->option('controller')) {
             $this->buildController();
 
@@ -112,6 +125,11 @@ class MakeCommand extends GeneratorCommand
         $class = str_replace($this->getNamespace($this->getNameInput()).'\\', '', $this->getNameInput());
 
         return str_replace($this->type, 'Controller', $class);
+    }
+
+    protected function injectRouteClass()
+    {
+
     }
 
     /**
