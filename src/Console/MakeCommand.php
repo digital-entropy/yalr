@@ -149,13 +149,13 @@ class MakeCommand extends GeneratorCommand
         ) {
             $stream = preg_replace(
                 '/\/\*\* \@inject '. $route_group .' \*\*\//',
-                "{$name}::class"."\n".'        /** @inject '.$route_group.' **/',
+                "{$name}::class,"."\n".'        /** @inject '.$route_group.' **/',
                 file_get_contents($path)
             );
 
             file_put_contents($path, $stream);
 
-            $this->comment("`{$name}` injected to `routes.php` in `{$route_group}` group");
+            $this->info("`{$name}` injected to `routes.php` in `{$route_group}` group.");
         } else {
             $this->error("Failed injecting route: file `routes.php` not found or group `{$route_group}` undefined");
         }
