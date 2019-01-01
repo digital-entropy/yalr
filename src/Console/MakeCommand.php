@@ -3,6 +3,7 @@
 namespace Jalameta\Router\Console;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -84,7 +85,8 @@ class MakeCommand extends GeneratorCommand
      */
     protected function buildClass($name)
     {
-        $this->injectRouteClass();
+        if ($this->option('inject') !== null)
+            $this->injectRouteClass($name);
 
         if ($this->option('controller')) {
             $this->buildController();
@@ -129,9 +131,34 @@ class MakeCommand extends GeneratorCommand
         return str_replace($this->type, 'Controller', $class);
     }
 
-    protected function injectRouteClass()
+    /**
+     * Inject Route to `routes.php`
+     *
+     * @param $name
+     */
+    protected function injectRouteClass($name)
     {
+        /*** @var $filesystem Filesystem */
+        $filesystem = app(Filesystem::class);
+        $path = config_path('routes.php');
+        $route_group = $this->option('inject');
 
+        if (
+            $filesystem->exists($path) &&
+            preg_match('/\/\*\* \@inject '. $route_group .' \*\*\//', file_get_contents($path))
+        ) {
+            $stream = preg_replace(
+                '/\/\*\* \@inject '. $route_group .' \*\*\//',
+                "{$name}::class"."\n".'        /** @inject '.$route_group.' **/',
+                file_get_contents($path)
+            );
+
+            file_put_contents($path, $stream);
+
+            $this->comment("{$name} injected to `routes.php` in `{$route_group}` group");
+        } else {
+            $this->error("Failed injecting route: file `routes.php` not found or group `{$route_group}` undefined");
+        }
     }
 
     /**
