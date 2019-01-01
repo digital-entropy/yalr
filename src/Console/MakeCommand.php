@@ -155,7 +155,7 @@ class MakeCommand extends GeneratorCommand
 
             file_put_contents($path, $stream);
 
-            $this->comment("{$name} injected to `routes.php` in `{$route_group}` group");
+            $this->comment("`{$name}` injected to `routes.php` in `{$route_group}` group");
         } else {
             $this->error("Failed injecting route: file `routes.php` not found or group `{$route_group}` undefined");
         }
