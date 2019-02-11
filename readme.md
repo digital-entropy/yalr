@@ -1,6 +1,6 @@
-##JPS Router
+## JPS Router
 
-###Introduction
+### Introduction
 JPS Router is Laravel Custom Route By Jalameta
 
 ## Installation
@@ -18,23 +18,23 @@ _note: {{ --remove }} it will removed all laravel default route._
  
    
 
-#####Display help information about jps router
+##### Display help information about jps router
 ``php artisan jps:routes --help`` 
 
 ## Usage
-####Generate Some Route
+#### Generate Some Route
 
 ``php artisan make:route {{ route name }}``
 
-####Generate Some Route & Controller
+#### Generate Some Route & Controller
 
 ``php artisan make:route {{ route name }} {{ --controller }}``
 
-####Generate Some Route & Auto registered on routes.php
+#### Generate Some Route & Auto registered on routes.php
 ``php artisan make:route {{ route name }} {{ --inject (web/api) }}``
 
-#####Display help information about make route
+##### Display help information about make route
 ``php artisan make:route --help``
 
-####List all registered JPS router class
+#### List all registered JPS router class
 ``` php artisan jps:routes```
