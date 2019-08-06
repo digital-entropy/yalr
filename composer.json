@@ -1,33 +1,33 @@
 {
-    "name": "jalameta/jps-router",
-    "type": "laravel-plugin",
-    "require": {
-        "illuminate/support": "^5.6|^5.7",
-        "illuminate/console": "^5.6|^5.7",
-        "illuminate/routing": "^5.6|^5.7",
-        "illuminate/filesystem": "^5.6|^5.7"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Rifki Alhuraibi",
-            "email": "veelasky@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Jalameta\\Router\\": "src"
-        }
-    },
-    "minimum-stability": "stable",
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Jalameta\\Router\\RouterServiceProvider"
-            ]
-        },
-	"branch-alias": {
-	    "dev-master": "1.0-dev"
-	}
+  "name": "jalameta/jps-router",
+  "type": "laravel-plugin",
+  "require": {
+    "illuminate/support": "^5.6|^5.7",
+    "illuminate/console": "^5.6|^5.7",
+    "illuminate/routing": "^5.6|^5.7",
+    "illuminate/filesystem": "^5.6|^5.7"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Rifki Alhuraibi",
+      "email": "veelasky@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Jalameta\\Router\\": "src"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Jalameta\\Router\\RouterServiceProvider"
+      ]
+    },
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
 }
