@@ -18,9 +18,9 @@ class DummyClass extends BaseRoute
     }
 
     /**
-     * Register routes handled by this class.
+     * Controller used by this route.
      *
-     * @return void
+     * @return string
      */
     public function controller()
     {
