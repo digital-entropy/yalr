@@ -129,7 +129,6 @@ class MakeCommand extends GeneratorCommand
 
     protected function injectRouteClass()
     {
-
     }
 
     /**
@@ -141,7 +140,7 @@ class MakeCommand extends GeneratorCommand
     {
         return [
             ['controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.'],
-            ['inject', 'j', InputOption::VALUE_OPTIONAL, 'Automatically inject route into registered array.']
+            ['inject', 'j', InputOption::VALUE_OPTIONAL, 'Automatically inject route into registered array.'],
         ];
     }
 }

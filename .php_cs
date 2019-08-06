@@ -85,5 +85,5 @@ return PhpCsFixer\Config::create()
         PhpCsFixer\Finder::create()
             ->exclude('vendor')
             ->notName('*.blade.php')
-            ->in(__DIR__)
+            ->in(__DIR__ . "/src")
     );

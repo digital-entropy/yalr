@@ -25,6 +25,9 @@
             "providers": [
                 "Jalameta\\Router\\RouterServiceProvider"
             ]
-        }
+        },
+	"branch-alias": {
+	    "dev-master": "1.0-dev"
+	}
     }
 }
