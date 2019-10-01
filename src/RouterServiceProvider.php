@@ -44,6 +44,8 @@ class RouterServiceProvider extends ServiceProvider
             $routes = config('routes.groups');
 
             foreach ($routes as $k => $v) {
+                throw_if(config('routes.'.$k) === null, new \OutOfBoundsException('group `'.$k.'` in config.routes doesn\'t exists'));
+
                 $factory->make($k, $v, config('routes.'.$k));
             }
 
