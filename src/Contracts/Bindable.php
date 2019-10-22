@@ -1,20 +1,25 @@
 <?php
 
+
 namespace Jalameta\Router\Contracts;
 
 /**
- * Self Registering Route Contracts.
+ * Interface Bindable
+ * This interface is the same
+ * with Binder Interface, removes static calling.
+ * @see Binder
  *
- * @author      veelasky <veelasky@gmail.com>
+ * @package Jalameta\Router\Contracts
  */
-interface Binder
+interface Bindable
 {
     /**
      * Bind and register the current route.
+     * remove static calling
      *
      * @return void
      */
-    public static function bind();
+    public function bind();
 
     /**
      * Register routes handled by this class.

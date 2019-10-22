@@ -1,16 +1,18 @@
 <?php
 
+
 namespace Jalameta\Router;
 
+
 use Jalameta\Router\Concerns\RouteController;
-use Jalameta\Router\Contracts\Binder;
+use Jalameta\Router\Contracts\Bindable;
 
 /**
- * Base router class.
+ * Base Group Router
  *
- * @author      veelasky <veelasky@gmail.com>
+ * @author      rendyananta <rendyananta66@gmail.com>
  */
-abstract class BaseRoute implements Binder
+abstract class GroupRoute implements Bindable
 {
     use RouteController;
 
@@ -19,14 +21,35 @@ abstract class BaseRoute implements Binder
      *
      * @var string
      */
-    protected $prefix = '/';
+    public $prefix = '/';
 
     /**
      * Registered route name.
      *
      * @var string
      */
-    protected $name;
+    public $name;
+
+    /**
+     * Middleware used in route
+     *
+     * @var array|string
+     */
+    public $middleware;
+
+    /**
+     * Route for specific domain
+     *
+     * @var string
+     */
+    public $domain;
+
+    /**
+     * Route for specific regular expression
+     *
+     * @var array|string
+     */
+    public $regex;
 
     /**
      * Router Registrar.
@@ -48,19 +71,16 @@ abstract class BaseRoute implements Binder
      *
      * @return void
      */
-    public static function bind()
+    public function bind()
     {
-        $route = new static();
-
-        $route->register();
-
-        $route->afterRegister();
+        $this->register();
+        $this->afterRegister();
     }
 
     /**
-     * Perform after register callback.
+     * Performs callback after register route
      *
-     * @return void
+     * @return mixed|void
      */
     public function afterRegister()
     {
@@ -68,31 +88,9 @@ abstract class BaseRoute implements Binder
     }
 
     /**
-     * Register routes handled by this class.
+     * Add dot before route name
      *
-     * @return void
-     */
-    abstract public function register();
-
-    /**
-     * Get route prefix.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    public function prefix($path = '/')
-    {
-        $qualifiedPath = $this->prefix.'/'.ltrim($path, '/');
-
-        return str_replace('//', '/', $qualifiedPath);
-    }
-
-    /**
-     * Get route name.
-     *
-     * @param null|string $suffix
-     *
+     * @param null $suffix
      * @return string
      */
     public function name($suffix = null)
@@ -103,4 +101,5 @@ abstract class BaseRoute implements Binder
 
         return $this->name.'.'.$suffix;
     }
+
 }

@@ -18,7 +18,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:route';
+    protected $name = 'make:route {--group}';
 
     /**
      * The console command description.
@@ -105,6 +105,10 @@ class MakeCommand extends GeneratorCommand
             );
         }
 
+        if ($this->option('group')) {
+            return str_replace('Base','Group', parent::buildClass($name));
+        }
+
         return parent::buildClass($name);
     }
 
@@ -171,6 +175,7 @@ class MakeCommand extends GeneratorCommand
     {
         return [
             ['controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.'],
+            ['group', 'g', InputOption::VALUE_NONE, 'Generate route group class.'],
             ['inject', 'j', InputOption::VALUE_OPTIONAL, 'Automatically inject route into registered array.'],
         ];
     }

@@ -2,9 +2,9 @@
 
 namespace Jalameta\Router;
 
-use RuntimeException;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Jalameta\Router\Contracts\Bindable;
+use RuntimeException;
 
 /**
  * Router Factory.
@@ -16,7 +16,7 @@ class RouterFactory
     /**
      * Laravel router.
      *
-     * @var \Illuminate\Routing\Router|\Laravel\Lumen\Routing\Router
+     * @var \Illuminate\Routing\Router
      */
     protected $router;
 
@@ -37,7 +37,7 @@ class RouterFactory
     /**
      * RouterFactory constructor.
      *
-     * @param \Illuminate\Routing\Router|\Laravel\Lumen\Routing\Router $router
+     * @param \Illuminate\Routing\Router $router
      */
     public function __construct($router)
     {
@@ -90,7 +90,15 @@ class RouterFactory
         if (array_key_exists($group, $this->routes)) {
             $this->router->group($this->getOptions($group), function () use ($group) {
                 foreach ($this->get($group) as $item) {
-                    $item::bind();
+                    /** @var Bindable $routeClass */
+                    $routeClass = new $item();
+                    if ($routeClass instanceof GroupRoute) {
+                        $this->router->group($this->getRouteGroupOptions($routeClass), function () use ($routeClass) {
+                            $routeClass->bind();
+                        });
+                    } else {
+                        $item::bind();
+                    }
                 }
             });
         }
@@ -141,5 +149,38 @@ class RouterFactory
     public function all()
     {
         return $this->routes;
+    }
+
+    /**
+     * Get Route Binder Options
+     *
+     * @param GroupRoute $route
+     * @return array
+     */
+    private function getRouteGroupOptions(GroupRoute $route)
+    {
+        $options = [
+            'prefix' => $route->prefix
+        ];
+
+        if (isset($route->middleware) && !empty($route->middleware)) {
+            $options = array_merge($options, [
+                'middleware' => $route->middleware
+            ]);
+        }
+
+        if (isset($route->domain) && !empty($route->domain)) {
+            $options = array_merge($options, [
+                'domain' => $route->domain
+            ]);
+        }
+
+        if (!empty($route->regex)) {
+            array_merge($options, [
+                'where' => $route->regex
+            ]);
+        }
+
+        return $options;
     }
 }
