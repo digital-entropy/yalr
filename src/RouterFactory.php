@@ -92,13 +92,7 @@ class RouterFactory
                 foreach ($this->get($group) as $item) {
                     /** @var Bindable $routeClass */
                     $routeClass = new $item();
-                    if ($routeClass instanceof GroupRoute) {
-                        $this->router->group($this->getRouteGroupOptions($routeClass), function () use ($routeClass) {
-                            $routeClass->bind();
-                        });
-                    } else {
-                        $item::bind();
-                    }
+                    $routeClass->bind();
                 }
             });
         }
@@ -149,38 +143,5 @@ class RouterFactory
     public function all()
     {
         return $this->routes;
-    }
-
-    /**
-     * Get Route Binder Options
-     *
-     * @param GroupRoute $route
-     * @return array
-     */
-    private function getRouteGroupOptions(GroupRoute $route)
-    {
-        $options = [
-            'prefix' => $route->prefix
-        ];
-
-        if (isset($route->middleware) && !empty($route->middleware)) {
-            $options = array_merge($options, [
-                'middleware' => $route->middleware
-            ]);
-        }
-
-        if (isset($route->domain) && !empty($route->domain)) {
-            $options = array_merge($options, [
-                'domain' => $route->domain
-            ]);
-        }
-
-        if (!empty($route->regex)) {
-            array_merge($options, [
-                'where' => $route->regex
-            ]);
-        }
-
-        return $options;
     }
 }

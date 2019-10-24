@@ -3,14 +3,14 @@
 namespace Jalameta\Router;
 
 use Jalameta\Router\Concerns\RouteController;
-use Jalameta\Router\Contracts\Binder;
+use Jalameta\Router\Contracts\Bindable;
 
 /**
  * Base router class.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-abstract class BaseRoute implements Binder
+abstract class BaseRoute implements Bindable
 {
     use RouteController;
 
@@ -27,6 +27,27 @@ abstract class BaseRoute implements Binder
      * @var string
      */
     protected $name;
+
+    /**
+     * Middleware used in route
+     *
+     * @var array|string
+     */
+    public $middleware;
+
+    /**
+     * Route for specific domain
+     *
+     * @var string
+     */
+    public $domain;
+
+    /**
+     * Route for specific regular expression
+     *
+     * @var array|string
+     */
+    public $regex;
 
     /**
      * Router Registrar.
@@ -48,13 +69,13 @@ abstract class BaseRoute implements Binder
      *
      * @return void
      */
-    public static function bind()
+    public function bind()
     {
-        $route = new static();
+        $this->router->group($this->getRouteGroupOptions(), function () {
+            $this->register();
+        });
 
-        $route->register();
-
-        $route->afterRegister();
+        $this->afterRegister();
     }
 
     /**
@@ -83,9 +104,36 @@ abstract class BaseRoute implements Binder
      */
     public function prefix($path = '/')
     {
-        $qualifiedPath = $this->prefix.'/'.ltrim($path, '/');
+        return $this->prefix == '/' ? $path : $this->mergePath($path);
+    }
 
-        return str_replace('//', '/', $qualifiedPath);
+    /**
+     * Remove slash
+     *
+     * @param $path
+     * @return mixed
+     */
+    private function removeSlashes($path)
+    {
+        return ltrim(rtrim($path, '/'), '/');
+    }
+
+    /**
+     * Merge path from prefix property and path input
+     *
+     * @param $path
+     * @return mixed
+     */
+    private function mergePath($path)
+    {
+        $prefix = $this->removeSlashes($path);
+        $path = $this->removeSlashes($path);
+
+        if (strpos($path, $prefix) !== false) {
+            return $path;
+        }
+
+        return $prefix.'/'.$path;
     }
 
     /**
@@ -97,10 +145,36 @@ abstract class BaseRoute implements Binder
      */
     public function name($suffix = null)
     {
-        if (empty($suffix)) {
-            return $this->name;
+        return empty($this->name) ? $suffix : '.' . $suffix;
+    }
+
+    /**
+     * Get Route Binder Options
+     *
+     * @return array
+     */
+    public function getRouteGroupOptions()
+    {
+        $options = [
+            'prefix' => $this->prefix
+        ];
+
+        if (isset($this->name) && !empty($this->name)) {
+            $options['as'] = $this->name;
         }
 
-        return $this->name.'.'.$suffix;
+        if (isset($this->middleware) && !empty($this->middleware)) {
+            $options['middleware'] = $this->middleware;
+        }
+
+        if (isset($this->domain) && !empty($this->domain)) {
+            $options['domain'] = $this->domain;
+        }
+
+        if (!empty($this->regex)) {
+            $options['regex'] = $this->regex;
+        }
+
+        return $options;
     }
 }
