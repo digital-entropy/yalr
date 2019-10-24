@@ -33,21 +33,21 @@ abstract class BaseRoute implements Bindable
      *
      * @var array|string
      */
-    public $middleware;
+    protected $middleware;
 
     /**
      * Route for specific domain
      *
      * @var string
      */
-    public $domain;
+    protected $domain;
 
     /**
      * Route for specific regular expression
      *
      * @var array|string
      */
-    public $regex;
+    protected $regex;
 
     /**
      * Router Registrar.
