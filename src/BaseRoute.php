@@ -141,7 +141,7 @@ abstract class BaseRoute implements Bindable
      */
     public function name($suffix = null)
     {
-        return empty($this->name) ? $suffix : '.' . $suffix;
+        return empty($this->name) ? $suffix : $this->name . '.' . $suffix;
     }
 
     /**
@@ -152,10 +152,6 @@ abstract class BaseRoute implements Bindable
     public function getRouteGroupOptions()
     {
         $options = [];
-
-        if (isset($this->name) && !empty($this->name)) {
-            $options['as'] = $this->name;
-        }
 
         if (isset($this->middleware) && !empty($this->middleware)) {
             $options['middleware'] = $this->middleware;
