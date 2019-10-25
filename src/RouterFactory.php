@@ -2,9 +2,9 @@
 
 namespace Jalameta\Router;
 
+use RuntimeException;
 use Illuminate\Support\Collection;
 use Jalameta\Router\Contracts\Bindable;
-use RuntimeException;
 
 /**
  * Router Factory.

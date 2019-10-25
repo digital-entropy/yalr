@@ -1,20 +1,18 @@
 <?php
 
-
 namespace Jalameta\Router\Concerns;
 
 use RuntimeException;
 
 /**
- * Trait RouteController
- * @package Jalameta\Router\Concerns
+ * Trait RouteController.
  *
  * @author rendyananta<rendy, rendyananta66@gmail.com>
  */
 trait RouteController
 {
     /**
-     * Get controller namespace
+     * Get controller namespace.
      *
      * @return string
      */
@@ -41,5 +39,4 @@ trait RouteController
 
         return $controller.'@'.$method;
     }
-
 }

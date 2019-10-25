@@ -2,8 +2,8 @@
 
 namespace Jalameta\Router;
 
-use Jalameta\Router\Concerns\RouteController;
 use Jalameta\Router\Contracts\Bindable;
+use Jalameta\Router\Concerns\RouteController;
 
 /**
  * Base router class.
@@ -29,21 +29,21 @@ abstract class BaseRoute implements Bindable
     protected $name;
 
     /**
-     * Middleware used in route
+     * Middleware used in route.
      *
      * @var array|string
      */
     protected $middleware;
 
     /**
-     * Route for specific domain
+     * Route for specific domain.
      *
      * @var string
      */
     protected $domain;
 
     /**
-     * Route for specific regular expression
+     * Route for specific regular expression.
      *
      * @var array|string
      */
@@ -145,7 +145,7 @@ abstract class BaseRoute implements Bindable
     }
 
     /**
-     * Get Route Binder Options
+     * Get Route Binder Options.
      *
      * @return array
      */
