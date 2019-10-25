@@ -126,14 +126,10 @@ abstract class BaseRoute implements Bindable
      */
     private function mergePath($path)
     {
-        $prefix = $this->removeSlashes($path);
+        $prefix = $this->removeSlashes($this->prefix);
         $path = $this->removeSlashes($path);
 
-        if (strpos($path, $prefix) !== false) {
-            return $path;
-        }
-
-        return $prefix.'/'.$path;
+        return $prefix . '/' . $path;
     }
 
     /**
@@ -155,9 +151,7 @@ abstract class BaseRoute implements Bindable
      */
     public function getRouteGroupOptions()
     {
-        $options = [
-            'prefix' => $this->prefix
-        ];
+        $options = [];
 
         if (isset($this->name) && !empty($this->name)) {
             $options['as'] = $this->name;
