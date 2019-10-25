@@ -171,6 +171,10 @@ abstract class BaseRoute implements Bindable
         $prefix = $this->removeSlashes($path);
         $path = $this->removeSlashes($path);
 
+        if (empty($path)) {
+            return $prefix;
+        }
+
         if (strpos($path, $prefix) !== false) {
             return $path;
         }
