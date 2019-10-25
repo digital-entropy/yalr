@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Jalameta\Router\Contracts;
 
 /**
@@ -9,13 +8,12 @@ namespace Jalameta\Router\Contracts;
  * with Binder Interface, removes static calling.
  * @see Binder
  *
- * @package Jalameta\Router\Contracts
  */
 interface Bindable
 {
     /**
      * Bind and register the current route.
-     * remove static calling
+     * remove static calling.
      *
      * @return void
      */
@@ -29,7 +27,7 @@ interface Bindable
     public function register();
 
     /**
-     * Performs callback after registering route
+     * Performs callback after registering route.
      *
      * @return mixed
      */

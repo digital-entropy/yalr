@@ -2,8 +2,8 @@
 
 namespace Jalameta\Router;
 
-use Jalameta\Router\Concerns\RouteController;
 use Jalameta\Router\Contracts\Bindable;
+use Jalameta\Router\Concerns\RouteController;
 
 /**
  * Base router class.
@@ -29,21 +29,21 @@ abstract class BaseRoute implements Bindable
     protected $name;
 
     /**
-     * Middleware used in route
+     * Middleware used in route.
      *
      * @var array|string
      */
     protected $middleware;
 
     /**
-     * Route for specific domain
+     * Route for specific domain.
      *
      * @var string
      */
     protected $domain;
 
     /**
-     * Route for specific regular expression
+     * Route for specific regular expression.
      *
      * @var array|string
      */
@@ -108,7 +108,49 @@ abstract class BaseRoute implements Bindable
     }
 
     /**
-     * Remove slash
+     * Get route name.
+     *
+     * @param null|string $suffix
+     *
+     * @return string
+     */
+    public function name($suffix = null)
+    {
+        return empty($this->name) ? $suffix : '.'.$suffix;
+    }
+
+    /**
+     * Get Route Binder Options.
+     *
+     * @return array
+     */
+    public function getRouteGroupOptions()
+    {
+        $options = [
+            'prefix' => $this->prefix,
+        ];
+
+        if (isset($this->name) && ! empty($this->name)) {
+            $options['as'] = $this->name;
+        }
+
+        if (isset($this->middleware) && ! empty($this->middleware)) {
+            $options['middleware'] = $this->middleware;
+        }
+
+        if (isset($this->domain) && ! empty($this->domain)) {
+            $options['domain'] = $this->domain;
+        }
+
+        if (! empty($this->regex)) {
+            $options['regex'] = $this->regex;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Remove slash.
      *
      * @param $path
      * @return mixed
@@ -119,7 +161,7 @@ abstract class BaseRoute implements Bindable
     }
 
     /**
-     * Merge path from prefix property and path input
+     * Merge path from prefix property and path input.
      *
      * @param $path
      * @return mixed
@@ -134,47 +176,5 @@ abstract class BaseRoute implements Bindable
         }
 
         return $prefix.'/'.$path;
-    }
-
-    /**
-     * Get route name.
-     *
-     * @param null|string $suffix
-     *
-     * @return string
-     */
-    public function name($suffix = null)
-    {
-        return empty($this->name) ? $suffix : '.' . $suffix;
-    }
-
-    /**
-     * Get Route Binder Options
-     *
-     * @return array
-     */
-    public function getRouteGroupOptions()
-    {
-        $options = [
-            'prefix' => $this->prefix
-        ];
-
-        if (isset($this->name) && !empty($this->name)) {
-            $options['as'] = $this->name;
-        }
-
-        if (isset($this->middleware) && !empty($this->middleware)) {
-            $options['middleware'] = $this->middleware;
-        }
-
-        if (isset($this->domain) && !empty($this->domain)) {
-            $options['domain'] = $this->domain;
-        }
-
-        if (!empty($this->regex)) {
-            $options['regex'] = $this->regex;
-        }
-
-        return $options;
     }
 }
