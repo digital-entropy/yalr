@@ -43,7 +43,7 @@ Shows JPS router command helps
 #### Routes Configuration
 
 Below is an example of JPS router configurations. 
-```
+```php
 return [
     'groups' => [
         'web' => [
@@ -70,7 +70,7 @@ As you can see, `groups` index is group configuration, you can pass any laravel 
 #### Class Structure
 
 After creating a route with the command, we will see the example of the generated file. 
-```
+```php
 <?php
 
 namespace App\Http\Routes;
@@ -94,7 +94,7 @@ class DefaultRoute extends BaseRoute
 ```
 After creating a route with the command, we will see the example of the generated file. We can define routes within the register method. All you need is to call $this->router as a router instance. Then, we can invoke the laravel routing method such as post, put, etc. See 
 [Laravel Routing Docs](https://laravel.com/docs/6.x/routing).
-```
+```php
 <?php
 
 namespace App\Http\Routes;
@@ -120,7 +120,7 @@ class DefaultRoute extends BaseRoute
 
 ##### Using Controller 
 From create route command, we know we can pass the controller namespace. The created controller will show up in the route class as a controller method.
-```
+```php
 <?php
 
 namespace App\Http\Routes;
@@ -156,7 +156,7 @@ class DefaultRoute extends BaseRoute
 ```
 
 The route above is equal with 
-```
+```php
 Route::get('/', [
     'uses' => "App\Http\Controllers\HomeController@index"
 ]);
@@ -167,13 +167,13 @@ Or if you don't want to use the controller in the route class, you can pass the 
 Override the route prefix defined in the class property. Default prefix is '/';
 > `protected $prefix = '/home';` 
 
-```
+```php
 $this->router->get($this->prefix(), [
     'uses' => $this->uses('index')
 ]);
 ```
 The route above is equal with
-```
+```php
 Route::get('/home', [
     'uses' => "App\Http\Controllers\HomeController@index"
 ]);
@@ -185,7 +185,7 @@ You need to define the route name property within the route class
 
 Later we can use `$this->name()` method for adding separation with dot (.) between the route group name and the single route name
 
-```
+```php
 $this->router->get('/', [
     'as' => $this->name('landing')
     'uses' => $this->uses('index')
@@ -193,7 +193,7 @@ $this->router->get('/', [
 ```
 
 It equal with 
-```
+```php
 Route::get('/', [
     'as' => 'home.landing'
     'uses' => "App\Http\Controllers\HomeController@index"
