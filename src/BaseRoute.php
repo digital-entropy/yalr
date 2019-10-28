@@ -108,49 +108,7 @@ abstract class BaseRoute implements Bindable
     }
 
     /**
-     * Get route name.
-     *
-     * @param null|string $suffix
-     *
-     * @return string
-     */
-    public function name($suffix = null)
-    {
-        return empty($this->name) ? $suffix : '.'.$suffix;
-    }
-
-    /**
-     * Get Route Binder Options.
-     *
-     * @return array
-     */
-    public function getRouteGroupOptions()
-    {
-        $options = [
-            'prefix' => $this->prefix,
-        ];
-
-        if (isset($this->name) && ! empty($this->name)) {
-            $options['as'] = $this->name;
-        }
-
-        if (isset($this->middleware) && ! empty($this->middleware)) {
-            $options['middleware'] = $this->middleware;
-        }
-
-        if (isset($this->domain) && ! empty($this->domain)) {
-            $options['domain'] = $this->domain;
-        }
-
-        if (! empty($this->regex)) {
-            $options['regex'] = $this->regex;
-        }
-
-        return $options;
-    }
-
-    /**
-     * Remove slash.
+     * Remove slash
      *
      * @param $path
      * @return mixed
@@ -161,24 +119,52 @@ abstract class BaseRoute implements Bindable
     }
 
     /**
-     * Merge path from prefix property and path input.
+     * Merge path from prefix property and path input
      *
      * @param $path
      * @return mixed
      */
     private function mergePath($path)
     {
-        $prefix = $this->removeSlashes($path);
+        $prefix = $this->removeSlashes($this->prefix);
         $path = $this->removeSlashes($path);
 
-        if (empty($path)) {
-            return $prefix;
+        return $prefix . '/' . $path;
+    }
+
+    /**
+     * Get route name.
+     *
+     * @param null|string $suffix
+     *
+     * @return string
+     */
+    public function name($suffix = null)
+    {
+        return empty($this->name) ? $suffix : $this->name . '.' . $suffix;
+    }
+
+    /**
+     * Get Route Binder Options.
+     *
+     * @return array
+     */
+    public function getRouteGroupOptions()
+    {
+        $options = [];
+
+        if (isset($this->middleware) && !empty($this->middleware)) {
+            $options['middleware'] = $this->middleware;
         }
 
-        if (strpos($path, $prefix) !== false) {
-            return $path;
+        if (isset($this->domain) && !empty($this->domain)) {
+            $options['domain'] = $this->domain;
         }
 
-        return $prefix.'/'.$path;
+        if (!empty($this->regex)) {
+            $options['regex'] = $this->regex;
+        }
+
+        return $options;
     }
 }
