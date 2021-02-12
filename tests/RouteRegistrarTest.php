@@ -2,6 +2,7 @@
 
 namespace Jalameta\Router\Tests;
 
+use Jalameta\Router\Tests\Controllers\GetTestController;
 use Jalameta\Router\Tests\Routes\SimpleRoute;
 
 class RouteRegistrarTest extends TestCase
@@ -14,5 +15,19 @@ class RouteRegistrarTest extends TestCase
 
         $this->assertRegisteredRoutesCount(1);
         $this->assertRouteRegistered(uri: 'foo', name: 'foo');
+    }
+
+    public function test_using_attribute_registrar()
+    {
+        $this->routeFactory
+            ->make(groupName: 'foo', items: [GetTestController::class])
+            ->map('foo');
+
+        $this->assertRegisteredRoutesCount(1);
+        $this->assertRouteRegistered(
+            uri: 'my-get-method',
+            controller: GetTestController::class,
+            controllerMethod: 'myGetMethod',
+        );
     }
 }

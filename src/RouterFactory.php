@@ -6,6 +6,7 @@ use Illuminate\Routing\Router;
 use RuntimeException;
 use Illuminate\Support\Collection;
 use Jalameta\Router\Contracts\Bindable;
+use Spatie\RouteAttributes\RouteRegistrar;
 
 /**
  * Router Factory.
@@ -29,12 +30,18 @@ class RouterFactory
     protected array $options = [];
 
     /**
+     * @var \Spatie\RouteAttributes\RouteRegistrar
+     */
+    private RouteRegistrar $attributeRouteRegistrar;
+
+    /**
      * RouterFactory constructor.
      *
      * @param Router $router
      */
     public function __construct(protected Router $router)
     {
+        $this->attributeRouteRegistrar = new RouteRegistrar($router);
     }
 
     /**
@@ -140,7 +147,7 @@ class RouterFactory
         if ($routeClass instanceof Bindable) {
             $routeClass->bind();
         } else {
-            // todo:
+            $this->attributeRouteRegistrar->registerClass($class);
         }
     }
 }

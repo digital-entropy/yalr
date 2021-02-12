@@ -6,7 +6,8 @@
     "illuminate/console": "^8.0",
     "illuminate/routing": "^8.0",
     "illuminate/filesystem": "^8.0",
-    "illuminate/contracts": "^8.0"
+    "illuminate/contracts": "^8.0",
+    "spatie/laravel-route-attributes": "^1.2"
   },
   "require-dev": {
     "orchestra/testbench": "^6.0",
