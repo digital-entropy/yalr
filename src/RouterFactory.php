@@ -3,7 +3,6 @@
 namespace Jalameta\Router;
 
 use Illuminate\Routing\Router;
-use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Illuminate\Support\Collection;
 use Jalameta\Router\Contracts\Bindable;
@@ -119,7 +118,7 @@ class RouterFactory
      *
      * @return array
      */
-    #[Pure] public function groups(): array
+    public function groups(): array
     {
         return array_keys($this->routes);
     }
