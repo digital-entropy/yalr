@@ -52,7 +52,6 @@ $rules = [
         'type' => 'var',
     ],
     'self_accessor' => true,
-    'phpdoc_var_without_name' => true,
     'no_leading_import_slash' => true,
     'no_short_echo_tag' => true,
     'full_opening_tag' => true,

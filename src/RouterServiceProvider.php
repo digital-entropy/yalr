@@ -43,10 +43,12 @@ class RouterServiceProvider extends ServiceProvider
 
             $routes = config('routes.groups');
 
-            foreach ($routes as $k => $v) {
-                throw_if(config('routes.'.$k) === null, new \OutOfBoundsException('group `'.$k.'` in config.routes doesn\'t exists'));
+            foreach ($routes as $groupName => $options) {
+                /** @noinspection PhpParamsInspection */
+                throw_if(config('routes.'.$groupName) === null, \OutOfBoundsException::class,
+                    'group `'.$groupName.'` in config.routes doesn\'t exists');
 
-                $factory->make($k, $v, config('routes.'.$k));
+                $factory->make($groupName, $options, config('routes.'.$groupName));
             }
 
             return $factory;
@@ -54,10 +56,12 @@ class RouterServiceProvider extends ServiceProvider
 
         $this->app->alias('jps.routing', RouterFactory::class);
 
-        $this->commands([
-            Console\RoutesCommand::class,
-            Console\MakeCommand::class,
-        ]);
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\RoutesCommand::class,
+                Console\MakeCommand::class,
+            ]);
+        }
     }
 
     /**
@@ -68,7 +72,7 @@ class RouterServiceProvider extends ServiceProvider
     private function registerRoutes()
     {
         /**
-         * @var \Jalameta\Router\RouterFactory
+         * @var \Jalameta\Router\RouterFactory $router
          */
         $router = $this->app['jps.routing'];
 

@@ -4,6 +4,7 @@ namespace Jalameta\Router;
 
 use Jalameta\Router\Contracts\Bindable;
 use Jalameta\Router\Concerns\RouteController;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Base router class.
@@ -19,35 +20,35 @@ abstract class BaseRoute implements Bindable
      *
      * @var string
      */
-    protected $prefix = '/';
+    protected string $prefix = '/';
 
     /**
      * Registered route name.
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Middleware used in route.
      *
      * @var array|string
      */
-    protected $middleware;
+    protected array|string $middleware;
 
     /**
      * Route for specific domain.
      *
      * @var string
      */
-    protected $domain;
+    protected string $domain;
 
     /**
      * Route for specific regular expression.
      *
      * @var array|string
      */
-    protected $regex;
+    protected array|string $regex;
 
     /**
      * Router Registrar.
@@ -102,7 +103,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
-    public function prefix($path = '/')
+    #[Pure] public function prefix($path = '/'): string
     {
         return $this->prefix == '/' ? $path : $this->mergePath($path);
     }
@@ -111,9 +112,9 @@ abstract class BaseRoute implements Bindable
      * Remove slash
      *
      * @param $path
-     * @return mixed
+     * @return string
      */
-    private function removeSlashes($path)
+    #[Pure] private function removeSlashes($path): string
     {
         return ltrim(rtrim($path, '/'), '/');
     }
@@ -122,9 +123,9 @@ abstract class BaseRoute implements Bindable
      * Merge path from prefix property and path input
      *
      * @param $path
-     * @return mixed
+     * @return string
      */
-    private function mergePath($path)
+    #[Pure] private function mergePath($path): string
     {
         $prefix = $this->removeSlashes($this->prefix);
         $path = $this->removeSlashes($path);
@@ -139,7 +140,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
-    public function name($suffix = null)
+    #[Pure] public function name($suffix = null): string
     {
         if (empty($suffix))
             return $this->getBaseName(false);
@@ -154,7 +155,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
-    private function getBaseName($dotSuffix = true)
+    private function getBaseName($dotSuffix = true): string
     {
         return $this->name . ($dotSuffix) ? '.' : '';
     }
@@ -164,7 +165,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return array
      */
-    public function getRouteGroupOptions()
+    public function getRouteGroupOptions(): array
     {
         $options = [];
 

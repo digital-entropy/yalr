@@ -29,7 +29,7 @@ interface Bindable
     /**
      * Performs callback after registering route.
      *
-     * @return mixed
+     * @return void
      */
     public function afterRegister();
 }

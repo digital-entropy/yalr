@@ -2,6 +2,8 @@
 
 namespace Jalameta\Router;
 
+use Illuminate\Routing\Router;
+use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Illuminate\Support\Collection;
 use Jalameta\Router\Contracts\Bindable;
@@ -14,56 +16,48 @@ use Jalameta\Router\Contracts\Bindable;
 class RouterFactory
 {
     /**
-     * Laravel router.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * Route groups.
      *
      * @var array
      */
-    protected $routes = [];
+    protected array $routes = [];
 
     /**
      * List of all options.
      *
      * @var array
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * RouterFactory constructor.
      *
-     * @param \Illuminate\Routing\Router $router
+     * @param Router $router
      */
-    public function __construct($router)
+    public function __construct(protected Router $router)
     {
-        $this->router = $router;
     }
 
     /**
      * Create new route group.
      *
-     * @param       $key
+     * @param       $groupName
      * @param array $options
      * @param array $items
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Jalameta\Router\RouterFactory
      */
-    public function make($key, array $options = [], array $items = [])
+    public function make($groupName, array $options = [], array $items = []): RouterFactory
     {
-        if (array_key_exists($key, $this->routes) == false) {
-            $this->routes[$key] = new Collection($items);
+        if (array_key_exists($groupName, $this->routes) == false) {
+            $this->routes[$groupName] = new Collection($items);
         } else {
-            throw new RuntimeException("Route Group with key: `$key` already exist.");
+            throw new RuntimeException("Route Group with key: `$groupName` already exist.");
         }
 
-        $this->options[$key] = $options;
+        $this->options[$groupName] = $options;
 
-        return $this->get($key);
+        return $this;
     }
 
     /**
@@ -81,20 +75,15 @@ class RouterFactory
     /**
      * Map all routes into laravel routes.
      *
-     * @param $group
+     * @param $groupName
      *
      * @return void
      */
-    public function map($group)
+    public function map(string $groupName)
     {
-        if (array_key_exists($group, $this->routes)) {
-            $this->router->group($this->getOptions($group), function () use ($group) {
-                foreach ($this->get($group) as $item) {
-                    /** @var Bindable $routeClass */
-                    $routeClass = new $item();
-                    $routeClass->bind();
-                }
-            });
+        if (array_key_exists($groupName, $this->routes)) {
+            $this->router->group($this->getOptions($groupName),
+                fn() => collect($this->get($groupName))->each(fn($class) => $this->classRouteRegistrar($class)));
         }
     }
 
@@ -104,7 +93,7 @@ class RouterFactory
      * @param $key
      * @return mixed
      */
-    public function getOptions($key)
+    public function getOptions($key): mixed
     {
         return $this->options[$key];
     }
@@ -116,7 +105,7 @@ class RouterFactory
      *
      * @return \Illuminate\Support\Collection
      */
-    public function get($key)
+    public function get($key): Collection
     {
         if (array_key_exists($key, $this->routes)) {
             return $this->routes[$key];
@@ -130,7 +119,7 @@ class RouterFactory
      *
      * @return array
      */
-    public function groups()
+    #[Pure] public function groups(): array
     {
         return array_keys($this->routes);
     }
@@ -140,8 +129,19 @@ class RouterFactory
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->routes;
+    }
+
+    private function classRouteRegistrar(string $class)
+    {
+        $routeClass = new $class();
+
+        if ($routeClass instanceof Bindable) {
+            $routeClass->bind();
+        } else {
+            // todo:
+        }
     }
 }

@@ -16,7 +16,7 @@ trait RouteController
      *
      * @return string
      */
-    public function controller()
+    public function controller(): string
     {
         return '';
     }
@@ -25,11 +25,11 @@ trait RouteController
      * Use controller method.
      *
      * @param $method string
-     * @param $controller string
+     * @param null|string $controller
      *
      * @return string
      */
-    public function uses($method, $controller = null)
+    public function uses(string $method, $controller = null): string
     {
         if (! method_exists($this, 'controller') and empty($controller)) {
             throw new RuntimeException('Controller is not defined.');
