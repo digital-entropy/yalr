@@ -25,9 +25,10 @@ class RouteRegistrarTest extends TestCase
 
         $this->assertRegisteredRoutesCount(1);
         $this->assertRouteRegistered(
-            uri: 'my-get-method',
+            uri: 'test',
             controller: GetTestController::class,
-            controllerMethod: 'myGetMethod',
+            controllerMethod: 'index',
+            name: 'test.index',
         );
     }
 }

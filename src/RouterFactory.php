@@ -3,10 +3,10 @@
 namespace Jalameta\Router;
 
 use Illuminate\Routing\Router;
+use JetBrains\PhpStorm\Pure;
 use RuntimeException;
 use Illuminate\Support\Collection;
 use Jalameta\Router\Contracts\Bindable;
-use Spatie\RouteAttributes\RouteRegistrar;
 
 /**
  * Router Factory.
@@ -30,18 +30,20 @@ class RouterFactory
     protected array $options = [];
 
     /**
-     * @var \Spatie\RouteAttributes\RouteRegistrar
+     * @var \Jalameta\Router\RouteAttributeRegistrar
      */
-    private RouteRegistrar $attributeRouteRegistrar;
+    private RouteAttributeRegistrar $attributeRouteRegistrar;
 
     /**
      * RouterFactory constructor.
      *
      * @param Router $router
      */
-    public function __construct(protected Router $router)
-    {
-        $this->attributeRouteRegistrar = new RouteRegistrar($router);
+    #[Pure]
+    public function __construct(
+        protected Router $router
+    ) {
+        $this->attributeRouteRegistrar = new RouteAttributeRegistrar($router);
     }
 
     /**
@@ -125,6 +127,7 @@ class RouterFactory
      *
      * @return array
      */
+    #[Pure]
     public function groups(): array
     {
         return array_keys($this->routes);

@@ -2,12 +2,15 @@
 
 namespace Jalameta\Router\Tests\Controllers;
 
-use Spatie\RouteAttributes\Attributes\Get;
+use Jalameta\Router\Attributes\Get;
+use Jalameta\Router\Attributes\Name;
+use Jalameta\Router\Attributes\Prefix;
 
+#[Name('test', dotSuffix: true), Prefix('test')]
 class GetTestController
 {
-    #[Get('my-get-method')]
-    public function myGetMethod()
+    #[Get('/', name: 'index')]
+    public function index()
     {
     }
 }

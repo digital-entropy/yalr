@@ -4,6 +4,7 @@ namespace Jalameta\Router;
 
 use Jalameta\Router\Contracts\Bindable;
 use Jalameta\Router\Concerns\RouteController;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Base router class.
@@ -113,6 +114,7 @@ abstract class BaseRoute implements Bindable
      * @param $path
      * @return string
      */
+    #[Pure]
     private function removeSlashes($path): string
     {
         return ltrim(rtrim($path, '/'), '/');
@@ -124,6 +126,7 @@ abstract class BaseRoute implements Bindable
      * @param $path
      * @return string
      */
+    #[Pure]
     private function mergePath($path): string
     {
         $prefix = $this->removeSlashes($this->prefix);
@@ -139,10 +142,12 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
+    #[Pure]
     public function name($suffix = null): string
     {
-        if (empty($suffix))
+        if (empty($suffix)) {
             return $this->getBaseName(false);
+        }
 
         return (empty($this->name) ? $suffix : $this->getBaseName()) . $suffix;
     }
