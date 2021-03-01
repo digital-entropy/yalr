@@ -23,7 +23,7 @@ class RouteRegistrarTest extends TestCase
             ->make(groupName: 'foo', items: [GetTestController::class])
             ->map('foo');
 
-        $this->assertRegisteredRoutesCount(1);
+        $this->assertRegisteredRoutesCount(5);
         $this->assertRouteRegistered(
             uri: 'test',
             controller: GetTestController::class,
