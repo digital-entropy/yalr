@@ -2,7 +2,7 @@
 
 namespace Jalameta\Router;
 
-use Illuminate\Routing\Router;
+use Illuminate\Routing\RouteRegistrar;
 use Jalameta\Router\Attributes\Domain;
 use Jalameta\Router\Attributes\Middleware;
 use Jalameta\Router\Attributes\Name;
@@ -13,12 +13,8 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
 
-class RouteAttributeRegistrar
+class RouteAttributeRegistrar extends RouteRegistrar
 {
-    public function __construct(public Router $router)
-    {
-    }
-
     /**
      * Registering some class to router
      *
@@ -77,15 +73,15 @@ class RouteAttributeRegistrar
                         $name = $attributeInstance->name;
                         $middleware = $attributeInstance->middleware;
 
-                        $route = $this->router->addRoute($httpMethods, $uri, $action);
-
                         if (!empty($name)) {
-                            $route->name($name);
+                            $this->name($name);
                         }
 
                         if (!empty($middleware)) {
-                            $route->middleware($middleware);
+                            $this->middleware($middleware);
                         }
+
+                        $this->router->addRoute($httpMethods, $uri, $this->compileAction($action));
                     });
             });
     }
