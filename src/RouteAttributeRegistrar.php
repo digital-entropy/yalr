@@ -21,7 +21,7 @@ class RouteAttributeRegistrar extends RouteRegistrar
      * @param string $className
      * @throws \ReflectionException
      */
-    public function registerClass(string $className)
+    public function registerClass(string $className): void
     {
         if (!class_exists($className)) {
             return;
@@ -85,5 +85,4 @@ class RouteAttributeRegistrar extends RouteRegistrar
                     });
             });
     }
-
 }

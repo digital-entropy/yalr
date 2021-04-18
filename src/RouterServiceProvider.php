@@ -2,6 +2,7 @@
 
 namespace Jalameta\Router;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -16,15 +17,13 @@ class RouterServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/routes.php' => base_path('config/routes.php'),
             ], 'jps-router-config');
         }
-
-        $this->registerRoutes();
     }
 
     /**
@@ -32,23 +31,20 @@ class RouterServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton('jps.routing', function ($app) {
-            $factory = new RouterFactory($app->router);
+        $this->app->singleton('jps.routing', function () {
+            $factory = new RouterFactory(fn () => [
+                Container::getInstance()['config'],
+                Container::getInstance()['router'],
+            ]);
 
-            $routes = config('routes.groups');
-
-            foreach ($routes as $groupName => $options) {
-                /** @noinspection PhpParamsInspection */
-                throw_if(config('routes.'.$groupName) === null, \OutOfBoundsException::class,
-                    'group `'.$groupName.'` in config.routes doesn\'t exists');
-
-                $factory->make($groupName, $options, config('routes.'.$groupName));
+            if (! RouterFactory::$fake) {
+                $factory->register();
             }
 
             return $factory;
@@ -62,20 +58,5 @@ class RouterServiceProvider extends ServiceProvider
                 Console\MakeCommand::class,
             ]);
         }
-    }
-
-    /**
-     * Register all routes in application container.
-     *
-     * @return void
-     */
-    private function registerRoutes()
-    {
-        /**
-         * @var \Jalameta\Router\RouterFactory $router
-         */
-        $router = $this->app['jps.routing'];
-
-        $router->register();
     }
 }

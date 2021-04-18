@@ -2,6 +2,7 @@
 
 namespace Jalameta\Router;
 
+use Illuminate\Config\Repository;
 use Illuminate\Routing\Router;
 use JetBrains\PhpStorm\Pure;
 use RuntimeException;
@@ -15,6 +16,8 @@ use Jalameta\Router\Contracts\Bindable;
  */
 class RouterFactory
 {
+    public static bool $fake = false;
+
     /**
      * Route groups.
      *
@@ -30,20 +33,21 @@ class RouterFactory
     protected array $options = [];
 
     /**
-     * @var \Jalameta\Router\RouteAttributeRegistrar
-     */
-    private RouteAttributeRegistrar $attributeRouteRegistrar;
-
-    /**
      * RouterFactory constructor.
      *
-     * @param Router $router
+     * @param \Closure $resolver should return [Config, Router]
      */
     #[Pure]
     public function __construct(
-        protected Router $router
-    ) {
-        $this->attributeRouteRegistrar = new RouteAttributeRegistrar($router);
+        protected \Closure $resolver
+    ) {}
+
+    /**
+     * @param bool $fake
+     */
+    public static function fake(bool $fake = true): void
+    {
+        self::$fake = $fake;
     }
 
     /**
@@ -57,7 +61,7 @@ class RouterFactory
      */
     public function make($groupName, array $options = [], array $items = []): RouterFactory
     {
-        if (array_key_exists($groupName, $this->routes) == false) {
+        if (! array_key_exists($groupName, $this->routes)) {
             $this->routes[$groupName] = new Collection($items);
         } else {
             throw new RuntimeException("Route Group with key: `$groupName` already exist.");
@@ -73,25 +77,52 @@ class RouterFactory
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
+        $resolver = $this->resolver;
+
+        /**
+         * @var  \Illuminate\Config\Repository $config
+         * @var  Router $router
+         */
+        [$config, $router] = $resolver();
+
+        $this->resolveRouteFromConfig($config);
+
         foreach ($this->groups() as $group) {
-            $this->map($group);
+            $this->map($router, $group);
+        }
+    }
+
+    protected function resolveRouteFromConfig(Repository $config): void
+    {
+        $routes = $config->get('routes.groups');
+
+        foreach ($routes as $groupName => $options) {
+            if ($config->get('routes.'.$groupName) === null) {
+                throw new \OutOfBoundsException('group `'.$groupName.'` in config.routes doesn\'t exists.');
+            }
+
+            $this->make($groupName, $options, $config->get('routes.'.$groupName));
         }
     }
 
     /**
      * Map all routes into laravel routes.
      *
-     * @param $groupName
+     * @param \Illuminate\Routing\Router $router
+     * @param string $groupName
      *
      * @return void
      */
-    public function map(string $groupName)
+    public function map(Router $router, string $groupName): void
     {
         if (array_key_exists($groupName, $this->routes)) {
-            $this->router->group($this->getOptions($groupName),
-                fn() => collect($this->get($groupName))->each(fn($class) => $this->classRouteRegistrar($class)));
+            $router->group($this->getOptions($groupName),
+                fn() => collect($this->get($groupName))->each(
+                    fn($class) => $this->classRouteRegistrar($router, $class)
+                )
+            );
         }
     }
 
@@ -143,14 +174,21 @@ class RouterFactory
         return $this->routes;
     }
 
-    private function classRouteRegistrar(string $class)
+    /**
+     * Register class
+     *
+     * @param \Illuminate\Routing\Router $router
+     * @param string $class
+     * @throws \ReflectionException
+     */
+    private function classRouteRegistrar(Router $router, string $class): void
     {
         $routeClass = new $class();
 
         if ($routeClass instanceof Bindable) {
             $routeClass->bind();
         } else {
-            $this->attributeRouteRegistrar->registerClass($class);
+            (new RouteAttributeRegistrar($router))->registerClass($class);
         }
     }
 }

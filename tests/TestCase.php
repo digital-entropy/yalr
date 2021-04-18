@@ -11,13 +11,11 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-    protected RouterFactory $routeFactory;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->routeFactory = $this->app->make('jps.routing');
+        RouterFactory::fake();
     }
 
     protected function getPackageProviders($app): array
@@ -36,7 +34,7 @@ class TestCase extends Orchestra
     {
         $actualNumber = $this->getRouteCollection()->count();
 
-        $this->assertEquals($expectedNumber, $actualNumber);
+        self::assertEquals($expectedNumber, $actualNumber);
 
         return $this;
     }
@@ -90,7 +88,7 @@ class TestCase extends Orchestra
                 return true;
             });
 
-        $this->assertTrue($routeRegistered, 'The expected route was not registered');
+        self::assertTrue($routeRegistered, 'The expected route was not registered');
 
         return $this;
     }
@@ -98,5 +96,10 @@ class TestCase extends Orchestra
     protected function getRouteCollection(): RouteCollection
     {
         return app()->router->getRoutes();
+    }
+
+    protected function routerFactory(): RouterFactory
+    {
+        return $this->app->make(RouterFactory::class);
     }
 }
