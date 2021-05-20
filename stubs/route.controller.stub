@@ -12,7 +12,7 @@ class DummyClass extends BaseRoute
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         // make an awesome route
     }
@@ -22,7 +22,7 @@ class DummyClass extends BaseRoute
      *
      * @return string
      */
-    public function controller()
+    public function controller(): string
     {
         return DummyController::class;
     }
