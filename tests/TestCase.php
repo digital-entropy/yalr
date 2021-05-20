@@ -52,13 +52,13 @@ class TestCase extends Orchestra
         ?string $domain = null,
         string | array $middleware = [],
     ): self {
-        if (! is_array($middleware)) {
+        if (! \is_array($middleware)) {
             $middleware = Arr::wrap($middleware);
         }
 
         $routeRegistered = collect($this->getRouteCollection()->getRoutes())
             ->contains(function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain) {
-                if (!in_array(strtoupper($httpMethod), $route->methods, true)) {
+                if (!\in_array(strtoupper($httpMethod), $route->methods, true)) {
                     return false;
                 }
 
@@ -67,7 +67,7 @@ class TestCase extends Orchestra
                 }
 
                 if (! $route->getAction('uses') instanceof Closure) {
-                    if (get_class($route->getController()) !== $controller) {
+                    if (\get_class($route->getController()) !== $controller) {
                         return false;
                     }
 

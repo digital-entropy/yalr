@@ -52,7 +52,7 @@ class RouteAttributeRegistrar extends RouteRegistrar
                 return $carry;
             }, []);
 
-        count($options) > 0
+        \count($options) > 0
             ? $this->router->group($options, fn() => $this->registerMethod($class))
             : $this->registerMethod($class);
     }
