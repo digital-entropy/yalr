@@ -3,20 +3,19 @@
 namespace Dentro\Yalr;
 
 use Illuminate\Container\Container;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as BaseRouteServiceProvider;
 
 /**
  * Router service provider.
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-class RouterServiceProvider extends ServiceProvider
+class RouteServiceProvider extends BaseRouteServiceProvider
 {
     /**
      * Bootstrap any package services.
      *
      * @return void
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function boot(): void
     {
@@ -25,8 +24,6 @@ class RouterServiceProvider extends ServiceProvider
                 __DIR__.'/../config/routes.php' => base_path('config/routes.php'),
             ], 'yalr-config');
         }
-
-        $this->app->make(RouterFactory::SERVICE_NAME);
     }
 
     /**
@@ -36,6 +33,8 @@ class RouterServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        parent::register();
+
         $this->mergeConfigFrom(
             __DIR__.'/../config/routes.php', 'routes'
         );
@@ -46,7 +45,7 @@ class RouterServiceProvider extends ServiceProvider
                 Container::getInstance()['router'],
             ]);
 
-            if (! RouterFactory::$fake) {
+            if (! RouterFactory::$fake && ! $this->routesAreCached()) {
                 $factory->register();
             }
 
@@ -62,5 +61,13 @@ class RouterServiceProvider extends ServiceProvider
                 Console\MakeCommand::class,
             ]);
         }
+    }
+
+    /**
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function loadRoutes(): void
+    {
+        $this->app->make(RouterFactory::SERVICE_NAME);
     }
 }

@@ -7,11 +7,9 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Arr;
 use Dentro\Yalr\RouterFactory;
-use Dentro\Yalr\RouterServiceProvider;
+use Dentro\Yalr\RouteServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use function get_class;
-use function in_array;
-use function is_array;
+
 
 class TestCase extends Orchestra
 {
@@ -25,7 +23,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            RouterServiceProvider::class,
+            RouteServiceProvider::class,
         ];
     }
 

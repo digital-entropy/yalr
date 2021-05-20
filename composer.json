@@ -45,7 +45,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Dentro\\Yalr\\RouterServiceProvider"
+        "Dentro\\Yalr\\RouteServiceProvider"
       ]
     },
     "branch-alias": {
