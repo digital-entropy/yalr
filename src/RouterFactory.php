@@ -68,7 +68,7 @@ class RouterFactory
      */
     public function make($groupName, array $options = [], array $items = []): self
     {
-        if (! array_key_exists($groupName, $this->routes)) {
+        if (! \array_key_exists($groupName, $this->routes)) {
             $this->routes[$groupName] = new Collection($items);
         } else {
             throw new RuntimeException("Route Group with key: `$groupName` already exist.");
@@ -124,7 +124,7 @@ class RouterFactory
      */
     public function map(Router $router, string $groupName): void
     {
-        if (array_key_exists($groupName, $this->routes)) {
+        if (\array_key_exists($groupName, $this->routes)) {
             $router->group($this->getOptions($groupName),
                 fn() => collect($this->get($groupName))->each(
                     fn($class) => $this->classRouteRegistrar($router, $class)
@@ -153,7 +153,7 @@ class RouterFactory
      */
     public function get($key): Collection
     {
-        if (array_key_exists($key, $this->routes)) {
+        if (\array_key_exists($key, $this->routes)) {
             return $this->routes[$key];
         }
 
@@ -192,7 +192,7 @@ class RouterFactory
     {
         $reflectionClass = new ReflectionClass($class);
 
-        if (in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+        if (\in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
             /** @var \Dentro\Yalr\Contracts\Bindable $bindableClass */
             $bindableClass = $reflectionClass->newInstance($router);
             $bindableClass->bind();
