@@ -1,9 +1,4 @@
 <?php
-/**
- * Router configuration.
- *
- * @author      veelasky <veelasky@gmail.com>
- */
 
 return [
     'groups' => [

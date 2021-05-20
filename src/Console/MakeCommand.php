@@ -1,6 +1,6 @@
 <?php
 
-namespace Jalameta\Router\Console;
+namespace Dentro\Yalr\Console;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Console\GeneratorCommand;
@@ -25,7 +25,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $description = 'Create a new JPS route';
+    protected $description = 'Create a new YALR';
 
     /**
      * The type of class being generated.
@@ -41,7 +41,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @return string
      */
-    public function getDefaultNamespace($rootNameSpace)
+    public function getDefaultNamespace($rootNameSpace): string
     {
         return $rootNameSpace.'\Http\Routes';
     }
@@ -49,10 +49,10 @@ class MakeCommand extends GeneratorCommand
     /**
      * Execute the console command.
      *
-     * @return bool|null
+     * @return int
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function handle()
+    public function handle(): int
     {
         return parent::handle();
     }
@@ -63,10 +63,8 @@ class MakeCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getStub()
+    protected function getStub(): string
     {
-        $stub = null;
-
         if ($this->option('controller')) {
             $stub = '/../../stubs/route.controller.stub';
         } else {
@@ -83,7 +81,7 @@ class MakeCommand extends GeneratorCommand
      * @return string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function buildClass($name)
+    protected function buildClass($name): string
     {
         if ($this->option('inject') !== null) {
             $this->injectRouteClass($name);
@@ -113,7 +111,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @return void
      */
-    protected function buildController()
+    protected function buildController(): void
     {
         $this->call('make:controller', [
             'name' => str_replace($this->type, 'Controller', $this->getNameInput()),
@@ -125,11 +123,9 @@ class MakeCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getControllerClassname()
+    protected function getControllerClassname(): string
     {
-        $class = str_replace($this->getNamespace($this->getNameInput()).'\\', '', $this->getNameInput());
-
-        return str_replace($this->type, 'Controller', $class);
+        return str_replace(array($this->getNamespace($this->getNameInput()) . '\\', $this->type), array('', 'Controller'), $this->getNameInput());
     }
 
     /**
@@ -137,9 +133,9 @@ class MakeCommand extends GeneratorCommand
      *
      * @param $name
      */
-    protected function injectRouteClass($name)
+    protected function injectRouteClass($name): void
     {
-        /*** @var $filesystem Filesystem */
+        /** @var $filesystem Filesystem */
         $filesystem = app(Filesystem::class);
         $path = config_path('routes.php');
         $route_group = $this->option('inject');
@@ -167,7 +163,7 @@ class MakeCommand extends GeneratorCommand
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['controller', 'c', InputOption::VALUE_NONE, 'Generate controller accompanying route class.'],

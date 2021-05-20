@@ -1,6 +1,8 @@
 <?php
 
-namespace Jalameta\Router\Contracts;
+namespace Dentro\Yalr\Contracts;
+
+use Illuminate\Routing\Router;
 
 /**
  * Interface Bindable
@@ -11,25 +13,28 @@ namespace Jalameta\Router\Contracts;
  */
 interface Bindable
 {
+
+    public function __construct(Router $router);
+
     /**
      * Bind and register the current route.
      * remove static calling.
      *
      * @return void
      */
-    public function bind();
+    public function bind(): void;
 
     /**
      * Register routes handled by this class.
      *
      * @return void
      */
-    public function register();
+    public function register(): void;
 
     /**
      * Performs callback after registering route.
      *
      * @return void
      */
-    public function afterRegister();
+    public function afterRegister(): void;
 }

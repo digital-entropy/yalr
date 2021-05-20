@@ -1,9 +1,9 @@
 <?php
 
-namespace Jalameta\Router\Tests;
+namespace Dentro\Yalr\Tests;
 
-use Jalameta\Router\Tests\Controllers\GetTestController;
-use Jalameta\Router\Tests\Routes\SimpleRoute;
+use Dentro\Yalr\Tests\Controllers\GetTestController;
+use Dentro\Yalr\Tests\Routes\SimpleRoute;
 
 class RouteRegistrarTest extends TestCase
 {

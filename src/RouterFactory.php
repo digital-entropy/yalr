@@ -1,13 +1,18 @@
 <?php
 
-namespace Jalameta\Router;
+namespace Dentro\Yalr;
 
+use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Router;
 use JetBrains\PhpStorm\Pure;
+use OutOfBoundsException;
+use ReflectionClass;
 use RuntimeException;
 use Illuminate\Support\Collection;
-use Jalameta\Router\Contracts\Bindable;
+use Dentro\Yalr\Contracts\Bindable;
+use function array_key_exists;
+use function in_array;
 
 /**
  * Router Factory.
@@ -17,6 +22,8 @@ use Jalameta\Router\Contracts\Bindable;
 class RouterFactory
 {
     public static bool $fake = false;
+
+    public const SERVICE_NAME = 'yalr';
 
     /**
      * Route groups.
@@ -39,7 +46,7 @@ class RouterFactory
      */
     #[Pure]
     public function __construct(
-        protected \Closure $resolver
+        protected Closure $resolver
     ) {}
 
     /**
@@ -57,9 +64,9 @@ class RouterFactory
      * @param array $options
      * @param array $items
      *
-     * @return \Jalameta\Router\RouterFactory
+     * @return \Dentro\Yalr\RouterFactory
      */
-    public function make($groupName, array $options = [], array $items = []): RouterFactory
+    public function make($groupName, array $options = [], array $items = []): self
     {
         if (! array_key_exists($groupName, $this->routes)) {
             $this->routes[$groupName] = new Collection($items);
@@ -100,7 +107,7 @@ class RouterFactory
 
         foreach ($routes as $groupName => $options) {
             if ($config->get('routes.'.$groupName) === null) {
-                throw new \OutOfBoundsException('group `'.$groupName.'` in config.routes doesn\'t exists.');
+                throw new OutOfBoundsException('group `'.$groupName.'` in config.routes doesn\'t exists.');
             }
 
             $this->make($groupName, $options, $config->get('routes.'.$groupName));
@@ -183,10 +190,12 @@ class RouterFactory
      */
     private function classRouteRegistrar(Router $router, string $class): void
     {
-        $routeClass = new $class();
+        $reflectionClass = new ReflectionClass($class);
 
-        if ($routeClass instanceof Bindable) {
-            $routeClass->bind();
+        if (in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+            /** @var \Dentro\Yalr\Contracts\Bindable $bindableClass */
+            $bindableClass = $reflectionClass->newInstance($router);
+            $bindableClass->bind();
         } else {
             (new RouteAttributeRegistrar($router))->registerClass($class);
         }

@@ -1,9 +1,10 @@
 <?php
 
-namespace Jalameta\Router;
+namespace Dentro\Yalr;
 
-use Jalameta\Router\Contracts\Bindable;
-use Jalameta\Router\Concerns\RouteController;
+use Dentro\Yalr\Contracts\Bindable;
+use Dentro\Yalr\Concerns\RouteController;
+use Illuminate\Routing\Router;
 use JetBrains\PhpStorm\Pure;
 
 /**
@@ -51,26 +52,18 @@ abstract class BaseRoute implements Bindable
     protected array|string $regex;
 
     /**
-     * Router Registrar.
-     *
-     * @var \Illuminate\Routing\Router
-     */
-    protected $router;
-
-    /**
      * SelfBindingRoute constructor.
      */
-    public function __construct()
-    {
-        $this->router = app('router');
-    }
+    public function __construct(
+        protected Router $router
+    ) {}
 
     /**
      * Bind and register the current route.
      *
      * @return void
      */
-    public function bind()
+    public function bind(): void
     {
         $this->router->group($this->getRouteGroupOptions(), function () {
             $this->register();
@@ -84,7 +77,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return void
      */
-    public function afterRegister()
+    public function afterRegister(): void
     {
         //
     }
@@ -94,7 +87,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return void
      */
-    abstract public function register();
+    abstract public function register(): void;
 
     /**
      * Get route prefix.
@@ -103,9 +96,10 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
-    public function prefix($path = '/'): string
+    #[Pure]
+    public function prefix(string $path = '/'): string
     {
-        return $this->prefix == '/' ? $path : $this->mergePath($path);
+        return $this->prefix === '/' ? $path : $this->mergePath($path);
     }
 
     /**
@@ -138,12 +132,12 @@ abstract class BaseRoute implements Bindable
     /**
      * Get route name.
      *
-     * @param null|string $suffix
+     * @param string|null $suffix
      *
      * @return string
      */
     #[Pure]
-    public function name($suffix = null): string
+    public function name(string $suffix = null): string
     {
         if (empty($suffix)) {
             return $this->getBaseName(false);
@@ -159,7 +153,7 @@ abstract class BaseRoute implements Bindable
      *
      * @return string
      */
-    private function getBaseName($dotSuffix = true): string
+    private function getBaseName(bool $dotSuffix = true): string
     {
         return $this->name . ($dotSuffix ? '.' : '');
     }

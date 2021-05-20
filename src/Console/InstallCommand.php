@@ -1,6 +1,6 @@
 <?php
 
-namespace Jalameta\Router\Console;
+namespace Dentro\Yalr\Console;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
@@ -11,28 +11,28 @@ use Illuminate\Filesystem\Filesystem;
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-class RoutesCommand extends Command
+class InstallCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'jps:routes {--install : Install JPS router in favor of laravel routes} {--remove : Remove default laravel routes installation, only work with install option}';
+    protected $signature = 'yalr:install {--remove : Remove default laravel routes installation}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Manage JPS router in favor of original laravel router';
+    protected $description = 'Manage YALR in favor of original laravel router';
 
     /**
      * Laravel filesystem.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * InstallCommand constructor.
@@ -49,46 +49,11 @@ class RoutesCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
-        if ($this->wantInstall()) {
-            $this->install();
-        } else {
-            $this->displayRoutes();
-        }
-    }
-
-    /**
-     * Display all registered routes in JPS container.
-     *
-     * @return void
-     */
-    protected function displayRoutes()
-    {
-        $routes = app('jps.routing')->all();
-        $rows = [];
-
-        foreach ($routes as $group => $classes) {
-            foreach ($classes as $class) {
-                $rows[] = [
-                    $class, $group,
-                ];
-            }
-        }
-
-        $this->table(['Route Class', 'Group'], $rows);
-    }
-
-    /**
-     * Install JPS router.
-     *
-     * @return void
-     */
-    protected function install()
-    {
-        $this->comment('Publishing JPS Router config file..');
+        $this->comment('Publishing YALR config file..');
 
         if ($this->runningInLumen()) {
             if ($this->filesystem->exists(base_path('config')) === false) {
@@ -97,15 +62,17 @@ class RoutesCommand extends Command
 
             $this->filesystem->copy(__DIR__.'/../../config/routes.php', base_path('config/routes.php'));
         } else {
-            $this->callSilent('vendor:publish', ['--tag' => 'jps-router-config']);
+            $this->callSilent('vendor:publish', ['--tag' => 'yalr-config']);
         }
 
         if (
             $this->option('remove')
-            and $this->confirm('WARNING: Are you sure you want to remove default laravel route file?')
+            && $this->confirm('WARNING: Are you sure you want to remove default laravel route file?')
         ) {
             $this->removeLaravelRoute();
         }
+
+        return 0;
     }
 
     /**
@@ -113,19 +80,9 @@ class RoutesCommand extends Command
      *
      * @return bool
      */
-    protected function runningInLumen()
+    protected function runningInLumen(): bool
     {
         return Str::contains(app()->version(), 'Lumen');
-    }
-
-    /**
-     * Determine if user want to install the package.
-     *
-     * @return bool
-     */
-    protected function wantInstall()
-    {
-        return $this->option('install');
     }
 
     /**
@@ -133,7 +90,7 @@ class RoutesCommand extends Command
      *
      * @return void
      */
-    protected function removeLaravelRoute()
+    protected function removeLaravelRoute(): void
     {
         $this->filesystem->deleteDirectory(base_path('routes'));
         $this->comment('`routes` directory has been deleted!');

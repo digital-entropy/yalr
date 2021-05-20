@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use Jalameta\Router\BaseRoute;
+use Dentro\Yalr\BaseRoute;
 
 class DummyClass extends BaseRoute
 {
@@ -11,7 +11,7 @@ class DummyClass extends BaseRoute
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         // make an awesome route
     }

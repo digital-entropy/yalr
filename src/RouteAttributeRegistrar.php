@@ -1,17 +1,18 @@
 <?php
 
-namespace Jalameta\Router;
+namespace Dentro\Yalr;
 
 use Illuminate\Routing\RouteRegistrar;
-use Jalameta\Router\Attributes\Domain;
-use Jalameta\Router\Attributes\Middleware;
-use Jalameta\Router\Attributes\Name;
-use Jalameta\Router\Attributes\Prefix;
-use Jalameta\Router\Attributes\Route;
-use Jalameta\Router\Attributes\RouteAttribute;
+use Dentro\Yalr\Attributes\Domain;
+use Dentro\Yalr\Attributes\Middleware;
+use Dentro\Yalr\Attributes\Name;
+use Dentro\Yalr\Attributes\Prefix;
+use Dentro\Yalr\Attributes\Route;
+use Dentro\Yalr\Attributes\RouteAttribute;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use function count;
 
 class RouteAttributeRegistrar extends RouteRegistrar
 {

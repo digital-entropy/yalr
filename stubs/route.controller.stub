@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use Jalameta\Router\BaseRoute;
+use Dentro\Yalr\BaseRoute;
 use DummyRootNamespaceHttp\Controllers\DummyControllerName;
 
 class DummyClass extends BaseRoute

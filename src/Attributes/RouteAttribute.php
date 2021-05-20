@@ -1,6 +1,6 @@
 <?php
 
-namespace Jalameta\Router\Attributes;
+namespace Dentro\Yalr\Attributes;
 
 interface RouteAttribute
 {

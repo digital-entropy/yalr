@@ -1,6 +1,6 @@
 <?php
 
-namespace Jalameta\Router\Concerns;
+namespace Dentro\Yalr\Concerns;
 
 use RuntimeException;
 
@@ -25,13 +25,13 @@ trait RouteController
      * Use controller method.
      *
      * @param $method string
-     * @param null|string $controller
+     * @param string|null $controller
      *
      * @return string
      */
-    public function uses(string $method, $controller = null): string
+    public function uses(string $method, string $controller = null): string
     {
-        if (! method_exists($this, 'controller') and empty($controller)) {
+        if (empty($controller) && ! method_exists($this, 'controller')) {
             throw new RuntimeException('Controller is not defined.');
         }
 

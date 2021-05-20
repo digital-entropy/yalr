@@ -1,13 +1,17 @@
 <?php
 
-namespace Jalameta\Router\Tests;
+namespace Dentro\Yalr\Tests;
 
+use Closure;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Arr;
-use Jalameta\Router\RouterFactory;
-use Jalameta\Router\RouterServiceProvider;
+use Dentro\Yalr\RouterFactory;
+use Dentro\Yalr\RouterServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use function get_class;
+use function in_array;
+use function is_array;
 
 class TestCase extends Orchestra
 {
@@ -34,7 +38,7 @@ class TestCase extends Orchestra
     {
         $actualNumber = $this->getRouteCollection()->count();
 
-        self::assertEquals($expectedNumber, $actualNumber);
+        static::assertSame($expectedNumber, $actualNumber);
 
         return $this;
     }
@@ -54,7 +58,7 @@ class TestCase extends Orchestra
 
         $routeRegistered = collect($this->getRouteCollection()->getRoutes())
             ->contains(function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain) {
-                if (! in_array(strtoupper($httpMethod), $route->methods)) {
+                if (!in_array(strtoupper($httpMethod), $route->methods, true)) {
                     return false;
                 }
 
@@ -62,7 +66,7 @@ class TestCase extends Orchestra
                     return false;
                 }
 
-                if (! $route->getAction('uses') instanceof \Closure) {
+                if (! $route->getAction('uses') instanceof Closure) {
                     if (get_class($route->getController()) !== $controller) {
                         return false;
                     }
@@ -88,7 +92,7 @@ class TestCase extends Orchestra
                 return true;
             });
 
-        self::assertTrue($routeRegistered, 'The expected route was not registered');
+        static::assertTrue($routeRegistered, 'The expected route was not registered');
 
         return $this;
     }

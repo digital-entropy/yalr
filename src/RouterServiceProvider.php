@@ -1,6 +1,6 @@
 <?php
 
-namespace Jalameta\Router;
+namespace Dentro\Yalr;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
@@ -22,8 +22,10 @@ class RouterServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/routes.php' => base_path('config/routes.php'),
-            ], 'jps-router-config');
+            ], 'yalr-config');
         }
+
+        $this->app->call(RouterFactory::SERVICE_NAME);
     }
 
     /**
@@ -37,7 +39,7 @@ class RouterServiceProvider extends ServiceProvider
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton('jps.routing', function () {
+        $this->app->singleton(RouterFactory::SERVICE_NAME, function () {
             $factory = new RouterFactory(fn () => [
                 Container::getInstance()['config'],
                 Container::getInstance()['router'],
@@ -50,11 +52,12 @@ class RouterServiceProvider extends ServiceProvider
             return $factory;
         });
 
-        $this->app->alias('jps.routing', RouterFactory::class);
+        $this->app->alias(RouterFactory::SERVICE_NAME, RouterFactory::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Console\RoutesCommand::class,
+                Console\InstallCommand::class,
+                Console\DisplayCommnad::class,
                 Console\MakeCommand::class,
             ]);
         }

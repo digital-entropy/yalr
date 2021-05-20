@@ -1,12 +1,12 @@
 <?php
 
-namespace Jalameta\Router\Tests\Routes;
+namespace Dentro\Yalr\Tests\Routes;
 
-use Jalameta\Router\BaseRoute;
+use Dentro\Yalr\BaseRoute;
 
 class SimpleRoute extends BaseRoute
 {
-    public function register()
+    public function register(): void
     {
         $this->router->get($this->prefix('foo'), [
             'as' => 'foo',
