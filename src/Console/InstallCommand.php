@@ -95,7 +95,7 @@ class InstallCommand extends Command
         $this->filesystem->deleteDirectory(base_path('routes'));
         $this->comment('`routes` directory has been deleted!');
 
-        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider/php'))) {
+        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider.php'))) {
             $this->filesystem->delete(base_path('app/Providers/RouteServiceProvider.php'));
             $this->comment('`app/Providers/RouteServiceProvider.php` file has been deleted!');
         }
@@ -107,12 +107,12 @@ class InstallCommand extends Command
             file_get_contents(base_path('app/Console/Kernel.php'))
         );
         file_put_contents(base_path('app/Console/Kernel.php'), $stream);
-        $this->comment('`app/Providers/RouteServiceProvider.php` has been modified!');
+        $this->comment('`app/Console/Kernel.php` has been modified!');
 
         // remove RouteServiceProvider from config/app.php
         if ($this->filesystem->exists(base_path('config/app.php'))) {
             $stream = preg_replace(
-                '/App\\\Providers\\\RouteServiceProvider\:\:class\,/m',
+                '/App\\\Providers\\\RouteServiceProvider::class,/u',
                 '// App\\\Providers\\\RouteServiceProvider::class,',
                 file_get_contents(base_path('config/app.php'))
             );
