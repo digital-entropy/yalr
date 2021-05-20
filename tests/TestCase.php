@@ -17,9 +17,9 @@ class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
-        parent::setUp();
-
         RouterFactory::fake();
+
+        parent::setUp();
     }
 
     protected function getPackageProviders($app): array

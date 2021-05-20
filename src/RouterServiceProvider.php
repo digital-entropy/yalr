@@ -16,6 +16,7 @@ class RouterServiceProvider extends ServiceProvider
      * Bootstrap any package services.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function boot(): void
     {
@@ -25,7 +26,7 @@ class RouterServiceProvider extends ServiceProvider
             ], 'yalr-config');
         }
 
-        $this->app->call(RouterFactory::SERVICE_NAME);
+        $this->app->make(RouterFactory::SERVICE_NAME);
     }
 
     /**
