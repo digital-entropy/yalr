@@ -1,5 +1,10 @@
 <h1 align="center">YALR (Yet Another Laravel Router)</h1>
 
+![Test](https://github.com/digital-entropy/yalr/workflows/Test/badge.svg)
+![Coding Standard](https://github.com/digital-entropy/yalr/workflows/Coding%20Standard/badge.svg)
+[![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](//packagist.org/packages/dentro/yalr)
+[![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
+
 Laravel classes custom route wrapper. Support PHP 8 Attributes and classes route. 
 Previously known as [jalameta/router](https://github.com/jalameta/jps-router). Then, why would we publish it into new 
 banner ?, well, we revamp a lot of things including abstraction that use strict type feature such as type definition and 
