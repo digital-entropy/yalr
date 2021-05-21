@@ -54,9 +54,10 @@ class MakeCommand extends GeneratorCommand
      */
     public function handle(): int
     {
-        return parent::handle();
-    }
+        parent::handle();
 
+        return 0;
+    }
 
     /**
      * Get the stub file for the generator.
