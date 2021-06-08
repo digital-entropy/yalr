@@ -18,3 +18,8 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
       - name: Run Test
         run: composer test
+      - name: Upload to CodeCov.io
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CDCV_KEY }}
+          file: ./build/clover.xml
