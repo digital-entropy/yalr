@@ -2,6 +2,7 @@
 
 ![Test](https://github.com/digital-entropy/yalr/workflows/Test/badge.svg)
 ![Coding Standard](https://github.com/digital-entropy/yalr/workflows/Coding%20Standard/badge.svg)
+[![codecov](https://codecov.io/gh/digital-entropy/yalr/branch/master/graph/badge.svg?token=NeWuwvwOAk)](https://codecov.io/gh/digital-entropy/yalr)
 [![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](//packagist.org/packages/dentro/yalr)
 [![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
