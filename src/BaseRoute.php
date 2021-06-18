@@ -143,7 +143,7 @@ abstract class BaseRoute implements Bindable
             return $this->getBaseName(false);
         }
 
-        return (empty($this->name) ? $suffix : $this->getBaseName()) . $suffix;
+        return (empty($this->name ?? null) ? $suffix : $this->getBaseName() . $suffix);
     }
 
     /**
@@ -155,7 +155,7 @@ abstract class BaseRoute implements Bindable
      */
     private function getBaseName(bool $dotSuffix = true): string
     {
-        return $this->name . ($dotSuffix ? '.' : '');
+        return ($this->name ?? '') . ($dotSuffix ? '.' : '');
     }
 
     /**
