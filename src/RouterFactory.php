@@ -101,6 +101,25 @@ class RouterFactory
         }
     }
 
+    public function registerBinder(): void
+    {
+        $resolver = $this->resolver;
+
+        /**
+         * @var  \Illuminate\Config\Repository $config
+         * @var  Router $router
+         */
+        [$config, $router] = $resolver();
+
+        $binderClass = $config->get('routes.binder');
+
+        if ($binderClass) {
+            $reflectionClass = new ReflectionClass($binderClass);
+            $bindableClass = $reflectionClass->newInstance($router);
+            $bindableClass->bind();
+        }
+    }
+
     protected function resolveRouteFromConfig(Repository $config): void
     {
         $routes = $config->get('routes.groups');

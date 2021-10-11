@@ -45,10 +45,6 @@ class RouteServiceProvider extends BaseRouteServiceProvider
                 Container::getInstance()['router'],
             ]);
 
-            if (! RouterFactory::$fake && ! $this->routesAreCached()) {
-                $factory->register();
-            }
-
             return $factory;
         });
 
@@ -63,11 +59,24 @@ class RouteServiceProvider extends BaseRouteServiceProvider
         }
     }
 
+    protected function loadCachedRoutes()
+    {
+        parent::loadCachedRoutes();
+        $this->app->booted(function () {
+            $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
+            $routerFactory->registerBinder();
+        });
+    }
+
     /**
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function loadRoutes(): void
     {
-        $this->app->make(RouterFactory::SERVICE_NAME);
+        $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
+        $routerFactory->registerBinder();
+        if (! RouterFactory::$fake) {
+            $routerFactory->register();
+        }
     }
 }
