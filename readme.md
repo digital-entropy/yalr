@@ -7,10 +7,7 @@
 [![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
 Laravel classes custom route wrapper. Support PHP 8 Attributes and classes route. 
-Previously known as [jalameta/router](https://github.com/jalameta/jps-router). Then, why would we publish it into new 
-banner ?, well, we revamp a lot of things including abstraction that use strict type feature such as type definition and 
-return type, that's why we consider publishing this package under new banner.
-<br><br>
+Previously known as [jalameta/router](https://github.com/jalameta/jps-router).<br><br>
 
 ### TABLE OF CONTENT
  - [Installation](#installation)
