@@ -83,6 +83,9 @@ class RouteAttributeRegistrar extends RouteRegistrar
                         }
 
                         $this->router->addRoute($httpMethods, $uri, $this->compileAction($action));
+
+                        // reset attributes after registered
+                        $this->attributes = [];
                     });
             });
     }
