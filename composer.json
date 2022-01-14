@@ -3,17 +3,18 @@
   "description": "Class base routing for laravel application.",
   "require": {
     "php": "^8.0",
-    "illuminate/support": "^8.0",
-    "illuminate/console": "^8.0",
-    "illuminate/routing": "^8.0",
-    "illuminate/filesystem": "^8.0",
-    "illuminate/contracts": "^8.0"
+    "illuminate/support": "^8.0|^9.0",
+    "illuminate/console": "^8.0|^9.0",
+    "illuminate/routing": "^8.0|^9.0",
+    "illuminate/filesystem": "^8.0|^9.0",
+    "illuminate/contracts": "^8.0|^9.0"
   },
   "require-dev": {
     "orchestra/testbench": "^6.0",
     "phpunit/phpunit": "^9.3",
     "jetbrains/phpstorm-attributes": "^1.0",
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "vimeo/psalm": "^4.18"
   },
   "license": "MIT",
   "authors": [
@@ -53,6 +54,11 @@
     },
     "branch-alias": {
       "dev-master": "1.0-dev"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/package-versions-deprecated": true
     }
   }
 }

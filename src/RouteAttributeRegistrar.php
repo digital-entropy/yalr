@@ -20,7 +20,6 @@ class RouteAttributeRegistrar extends RouteRegistrar
      * Registering some class to router
      *
      * @param string $className
-     * @throws \ReflectionException
      */
     public function registerClass(string $className): void
     {
@@ -57,6 +56,10 @@ class RouteAttributeRegistrar extends RouteRegistrar
             : $this->registerMethod($class);
     }
 
+    /**
+     * @param \ReflectionClass $class
+     * @return void
+     */
     protected function registerMethod(ReflectionClass $class): void
     {
         collect($class->getMethods())

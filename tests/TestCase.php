@@ -3,13 +3,16 @@
 namespace Dentro\Yalr\Tests;
 
 use Closure;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Routing\CompiledRouteCollection;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Dentro\Yalr\RouterFactory;
 use Dentro\Yalr\RouteServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-
 
 class TestCase extends Orchestra
 {
@@ -95,9 +98,45 @@ class TestCase extends Orchestra
         return $this;
     }
 
-    protected function getRouteCollection(): RouteCollection
+    protected function getRouteCollection(): RouteCollection|CompiledRouteCollection
     {
-        return app()->router->getRoutes();
+        return $this->getRouter()->getRoutes();
+    }
+
+    protected function getRouter(): Router
+    {
+        return $this->app->make('router');
+    }
+
+    protected function cacheRoute(): void
+    {
+        $files = $this->app->make(Filesystem::class);
+
+        $stub = $files->get(__DIR__.'/../vendor/laravel/framework/src/Illuminate/Foundation/Console/stubs/routes.stub');
+
+        $content = str_replace('{{routes}}', var_export($this->getRouteCollection()->compile(), true), $stub);
+
+        $files->put(
+            $this->app->getCachedRoutesPath(), $content,
+        );
+
+        $this->assertTrue(
+            $files->exists(base_path('bootstrap/cache/routes-v7.php'))
+        );
+
+        if (isset($this->app)) {
+            $this->reloadApplication();
+        }
+
+
+        $this->beforeApplicationDestroyed(function () use ($files) {
+            $files->delete(
+                base_path('bootstrap/cache/routes-v7.php'),
+                ...$files->glob(base_path('routes/testbench-*.php'))
+            );
+
+            sleep(1);
+        });
     }
 
     protected function routerFactory(): RouterFactory

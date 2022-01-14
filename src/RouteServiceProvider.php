@@ -40,12 +40,10 @@ class RouteServiceProvider extends BaseRouteServiceProvider
         );
 
         $this->app->singleton(RouterFactory::SERVICE_NAME, function () {
-            $factory = new RouterFactory(fn () => [
+            return new RouterFactory(fn () => [
                 Container::getInstance()['config'],
                 Container::getInstance()['router'],
             ]);
-
-            return $factory;
         });
 
         $this->app->alias(RouterFactory::SERVICE_NAME, RouterFactory::class);
@@ -59,22 +57,33 @@ class RouteServiceProvider extends BaseRouteServiceProvider
         }
     }
 
-    protected function loadCachedRoutes()
+    /**
+     * Load the cached routes for the application.
+     *
+     * @return void
+     */
+    protected function loadCachedRoutes(): void
     {
         parent::loadCachedRoutes();
+
         $this->app->booted(function () {
+            /** @var \Dentro\Yalr\RouterFactory $routerFactory */
             $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
-            $routerFactory->registerBinder();
+            $routerFactory->registerPreloads();
         });
     }
 
     /**
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * Load the application routes.
+     *
+     * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException|\ReflectionException
      */
     protected function loadRoutes(): void
     {
+        /** @var \Dentro\Yalr\RouterFactory $routerFactory */
         $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
-        $routerFactory->registerBinder();
+        $routerFactory->registerPreloads();
         if (! RouterFactory::$fake) {
             $routerFactory->register();
         }

@@ -80,19 +80,27 @@ class RouterFactory
     }
 
     /**
+     * @return array<int, object>
+     */
+    protected function getDependencies(): array
+    {
+        $resolver = $this->resolver;
+
+        return $resolver();
+    }
+
+    /**
      * Register to route group.
      *
      * @return void
      */
     public function register(): void
     {
-        $resolver = $this->resolver;
-
         /**
-         * @var  \Illuminate\Config\Repository $config
-         * @var  Router $router
+         * @var \Illuminate\Config\Repository $config
+         * @var \Illuminate\Routing\Router $router
          */
-        [$config, $router] = $resolver();
+        [$config, $router] = $this->getDependencies();
 
         $this->resolveRouteFromConfig($config);
 
@@ -101,25 +109,40 @@ class RouterFactory
         }
     }
 
-    public function registerBinder(): void
+    /**
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function registerPreloads(): void
     {
-        $resolver = $this->resolver;
-
         /**
-         * @var  \Illuminate\Config\Repository $config
-         * @var  Router $router
+         * @var \Illuminate\Config\Repository $config
+         * @var \Illuminate\Routing\Router $router
          */
-        [$config, $router] = $resolver();
+        [$config, $router] = $this->getDependencies();
 
-        $binderClass = $config->get('routes.binder');
+        $binderClasses = $config->get('routes.preloads');
 
-        if ($binderClass) {
-            $reflectionClass = new ReflectionClass($binderClass);
-            $bindableClass = $reflectionClass->newInstance($router);
-            $bindableClass->bind();
+        if ($binderClasses && count($binderClasses) > 0) {
+            foreach ($binderClasses as $binderClass) {
+                $reflectionClass = new ReflectionClass($binderClass);
+                if (! in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+                    throw new RuntimeException("Class: `$binderClass` is not bindable.");
+                }
+
+                /** @var Bindable $bindableClass */
+                $bindableClass = $reflectionClass->newInstance($router);
+                $bindableClass->bind();
+            }
         }
     }
 
+    /**
+     * Get config for routes
+     *
+     * @param \Illuminate\Config\Repository $config
+     * @return void
+     */
     protected function resolveRouteFromConfig(Repository $config): void
     {
         $routes = $config->get('routes.groups');
@@ -211,7 +234,7 @@ class RouterFactory
     {
         $reflectionClass = new ReflectionClass($class);
 
-        if (\in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+        if (in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
             /** @var \Dentro\Yalr\Contracts\Bindable $bindableClass */
             $bindableClass = $reflectionClass->newInstance($router);
             $bindableClass->bind();

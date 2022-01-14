@@ -3,7 +3,7 @@
 ![Test](https://github.com/digital-entropy/yalr/workflows/Test/badge.svg)
 ![Coding Standard](https://github.com/digital-entropy/yalr/workflows/Coding%20Standard/badge.svg)
 [![codecov](https://codecov.io/gh/digital-entropy/yalr/branch/master/graph/badge.svg?token=NeWuwvwOAk)](https://codecov.io/gh/digital-entropy/yalr)
-[![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](//packagist.org/packages/dentro/yalr)
+[![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](https://packagist.org/packages/dentro/yalr)
 [![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
 Laravel classes custom route wrapper. Support PHP 8 Attributes and classes route. 
@@ -34,7 +34,7 @@ composer require dentro/yalr
 
 ### Requirements
  - PHP : "^8.0"
- - Laravel : "^8.0"
+ - Laravel : "^8.0|^9.0"
 
 ### Applying into your project
 Run command in your project 
@@ -253,7 +253,7 @@ Route::get('/', [
 ```
 
 ### Route Attribute
-PHP 8 comes up with a nice feature called `Attribute` see [this link](https://www.php.net/releases/8.0/en.php#attributes) for the detail. So we added those feature to this package for us to create something like this 
+PHP 8 comes up with a nice feature called `Attribute` see [this link](https://www.php.net/releases/8.0/en.php#attributes) for the detail. So we added those feature to this package for us to create something like the example below.
 ```php
 #[Middleware(['auth:sanctum', 'verified'])]
 class DashboardController extends Controller
