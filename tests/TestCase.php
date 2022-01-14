@@ -120,7 +120,7 @@ class TestCase extends Orchestra
             $this->app->getCachedRoutesPath(), $content,
         );
 
-        $this->assertTrue(
+        static::assertTrue(
             $files->exists(base_path('bootstrap/cache/routes-v7.php'))
         );
 

@@ -123,10 +123,10 @@ class RouterFactory
 
         $binderClasses = $config->get('routes.preloads');
 
-        if ($binderClasses && count($binderClasses) > 0) {
+        if ($binderClasses && \count($binderClasses) > 0) {
             foreach ($binderClasses as $binderClass) {
                 $reflectionClass = new ReflectionClass($binderClass);
-                if (! in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+                if (! \in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
                     throw new RuntimeException("Class: `$binderClass` is not bindable.");
                 }
 
@@ -234,7 +234,7 @@ class RouterFactory
     {
         $reflectionClass = new ReflectionClass($class);
 
-        if (in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
+        if (\in_array(Bindable::class, $reflectionClass->getInterfaceNames(), true)) {
             /** @var \Dentro\Yalr\Contracts\Bindable $bindableClass */
             $bindableClass = $reflectionClass->newInstance($router);
             $bindableClass->bind();
