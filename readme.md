@@ -252,6 +252,41 @@ Route::get('/', [
 ]);
 ```
 
+### Preloads
+Preloads are like [class wrapper route](#class-wrapper-route) but the difference is preloads are always run even though routes been cached. It might be the good place to put implicit binding and rate limiter there.<br> Example : 
+```php
+// config/routes.php
+
+'preloads' => [
+    App\Http\VariableBinder::class,
+    App\Http\RateLimiter::class,
+],
+```
+```php
+// app/Http/VariableBinder.php
+class VariableBinder extends BaseRoute 
+{
+    public function register(): void
+    {
+        $this->router->bind('fleet_hash', fn ($value) => Fleet::byHashOrFail($value));
+        $this->router->bind('office_slug', fn ($value) => Office::query()->where('slug', $value)->firstOrFail());
+    }
+}
+```
+```php
+// app/Http/RateLimiter.php
+class RateLimiter extends BaseRoute 
+{
+    public function register(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(360)->by($request->user()?->email.$request->ip());
+        });
+    }
+}
+```
+
+
 ### Route Attribute
 PHP 8 comes up with a nice feature called `Attribute` see [this link](https://www.php.net/releases/8.0/en.php#attributes) for the detail. So we added those feature to this package for us to create something like the example below.
 ```php
