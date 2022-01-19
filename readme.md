@@ -21,6 +21,7 @@ Previously known as [jalameta/router](https://github.com/jalameta/jps-router).<b
         - [Using Controller](#using-controller)
         - [Route Prefix](#route-prefix)
         - [Route Name](#route-name)
+    - [Preloads](#preloads)
     - [Route Attribute](#route-attribute)
         - [Available Class Target](#available-class-target)
         - [Available Method Target](#available-method-target)
