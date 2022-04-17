@@ -4,6 +4,7 @@ namespace Dentro\Yalr;
 
 use Dentro\Yalr\Contracts\Bindable;
 use Dentro\Yalr\Concerns\RouteController;
+use Dentro\Yalr\Contracts\Registerable;
 use Illuminate\Routing\Router;
 use JetBrains\PhpStorm\Pure;
 
@@ -12,7 +13,7 @@ use JetBrains\PhpStorm\Pure;
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-abstract class BaseRoute implements Bindable
+abstract class BaseRoute implements Bindable, Registerable
 {
     use RouteController;
 
