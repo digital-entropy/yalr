@@ -139,7 +139,8 @@ class DefaultRoute extends BaseRoute
 ```
 After creating a route with the command, we will see the example of the generated file. We can define routes within the
 register method. All you need is to call $this->router as a router instance. Then, we can invoke the laravel routing method such as post, put, etc. See 
-[Laravel Routing Docs](https://laravel.com/docs/6.x/routing).
+[Laravel Routing Docs](https://laravel.com/docs/9.x/routing). 
+> Avoid using closure action, otherwise your application will encounter error when routes were cached. 
 
 ```php
 <?php
@@ -254,20 +255,27 @@ Route::get('/', [
 ```
 
 ### Preloads
-Preloads are like [class wrapper route](#class-wrapper-route) but the difference is preloads are always run even though routes been cached. It might be the good place to put implicit binding and rate limiter there.<br> Example : 
+Preloads always run even though routes been cached. It might be the good place to put route model binding and rate limiter there.<br> Example : 
 ```php
 // config/routes.php
 
 'preloads' => [
-    App\Http\VariableBinder::class,
-    App\Http\RateLimiter::class,
+    App\Http\RouteModelBinding::class,
+    App\Http\RouteRateLimiter::class,
 ],
 ```
 ```php
-// app/Http/VariableBinder.php
-class VariableBinder extends BaseRoute 
+namespace App\Http;
+
+use Dentro\Yalr\Contracts\Bindable;
+
+class RouteModelBinding implements Bindable 
 {
-    public function register(): void
+    public function __construct(protected Router $router)
+    {
+    }
+
+    public function bind(): void
     {
         $this->router->bind('fleet_hash', fn ($value) => Fleet::byHashOrFail($value));
         $this->router->bind('office_slug', fn ($value) => Office::query()->where('slug', $value)->firstOrFail());
@@ -275,10 +283,17 @@ class VariableBinder extends BaseRoute
 }
 ```
 ```php
-// app/Http/RateLimiter.php
-class RateLimiter extends BaseRoute 
+namespace App\Http;
+
+use Dentro\Yalr\Contracts\Bindable;
+
+class RouteRateLimiter implements Bindable 
 {
-    public function register(): void
+    public function __construct(protected Router $router)
+    {
+    }
+
+    public function bind(): void
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(360)->by($request->user()?->email.$request->ip());
