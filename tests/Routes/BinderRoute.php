@@ -2,11 +2,16 @@
 
 namespace Dentro\Yalr\Tests\Routes;
 
-use Dentro\Yalr\BaseRoute;
+use Dentro\Yalr\Contracts\Bindable;
+use Illuminate\Routing\Router;
 
-class BinderRoute extends BaseRoute
+class BinderRoute implements Bindable
 {
-    public function register(): void
+    public function __construct(protected Router $router)
+    {
+    }
+
+    public function bind(): void
     {
         $this->router->bind('user', function ($value) {
             return 'User: ' . $value;
