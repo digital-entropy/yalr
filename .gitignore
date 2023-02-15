@@ -4,3 +4,4 @@ composer.lock
 .phpunit.result.cache
 build
 .php-cs-fixer.cache
+.phpunit*
