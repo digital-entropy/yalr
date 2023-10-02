@@ -39,6 +39,13 @@ abstract class BaseRoute implements Bindable, Registerable
     protected array|string $middleware;
 
     /**
+     * Middleware excluded in route.
+     *
+     * @var array|string
+     */
+    protected array|string $withoutMiddleware;
+
+    /**
      * Route for specific domain.
      *
      * @var string
@@ -170,6 +177,10 @@ abstract class BaseRoute implements Bindable, Registerable
 
         if (isset($this->middleware) && !empty($this->middleware)) {
             $options['middleware'] = $this->middleware;
+        }
+
+        if (isset($this->withoutMiddleware) && !empty($this->withoutMiddleware)) {
+            $options['withoutMiddleware'] = $this->withoutMiddleware;
         }
 
         if (isset($this->domain) && !empty($this->domain)) {

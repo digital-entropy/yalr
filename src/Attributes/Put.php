@@ -11,12 +11,14 @@ class Put extends Route
         string $uri,
         ?string $name = null,
         array | string $middleware = [],
+        array | string $withoutMiddleware = [],
     ) {
         parent::__construct(
             method: 'PUT',
             uri: $uri,
             name: $name,
             middleware: $middleware,
+            withoutMiddleware: $withoutMiddleware
         );
     }
 }

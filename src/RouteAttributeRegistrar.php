@@ -2,6 +2,7 @@
 
 namespace Dentro\Yalr;
 
+use Dentro\Yalr\Attributes\WithoutMiddleware;
 use Illuminate\Routing\RouteRegistrar;
 use Dentro\Yalr\Attributes\Domain;
 use Dentro\Yalr\Attributes\Middleware;
@@ -46,6 +47,10 @@ class RouteAttributeRegistrar extends RouteRegistrar
                         break;
                     case $attribute instanceof Middleware:
                         $carry['middleware'] = $attribute->middleware;
+                        break;
+                    case $attribute instanceof WithoutMiddleware:
+                        $carry['withoutMiddleware'] = $attribute->withoutMiddleware;
+                        break;
                 }
 
                 return $carry;
@@ -76,6 +81,7 @@ class RouteAttributeRegistrar extends RouteRegistrar
                         $uri = $attributeInstance->uri;
                         $name = $attributeInstance->name;
                         $middleware = $attributeInstance->middleware;
+                        $withoutMiddleware = $attributeInstance->withoutMiddleware;
 
                         if (!empty($name)) {
                             $this->name($name);
@@ -83,6 +89,10 @@ class RouteAttributeRegistrar extends RouteRegistrar
 
                         if (!empty($middleware)) {
                             $this->middleware($middleware);
+                        }
+
+                        if (!empty($withoutMiddleware)) {
+                            $this->withoutMiddleware($withoutMiddleware);
                         }
 
                         $this->router->addRoute($httpMethods, $uri, $this->compileAction($action));
