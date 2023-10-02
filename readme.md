@@ -328,13 +328,13 @@ Dentro\Yalr\Attributes\Middleware(string | array $middleware);
 
 #### Available Method Target
 ```php
-Dentro\Yalr\Attributes\Get(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Post(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Put(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Patch(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Options(string $uri, ?string $name = null, array | string $middleware = []);
-Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string $middleware = []);
+Dentro\Yalr\Attributes\Get(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Post(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Put(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Patch(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Options(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
+Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
 ```
 
 #### Added To Configuration Route
