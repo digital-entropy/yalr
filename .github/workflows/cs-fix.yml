@@ -2,8 +2,6 @@ name: Coding Standard
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 jobs:
   php-cs-fixer:
     runs-on: ubuntu-20.04

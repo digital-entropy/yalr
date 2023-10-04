@@ -6,7 +6,9 @@
 [![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](https://packagist.org/packages/dentro/yalr)
 [![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
-Laravel classes custom route wrapper. Support PHP 8 Attributes and classes route. 
+
+Define Laravel routes in different ways using [Class Wrapper Route](#class-wrapper-route) or [Route Attribute](#route-attribute)
+
 Previously known as [jalameta/router](https://github.com/jalameta/jps-router).<br><br>
 
 ### TABLE OF CONTENT
@@ -316,7 +318,6 @@ class DashboardController extends Controller
     }
 }
 ```
-pretty cool right!. This feature is inspired by [spatie/laravel-route-attribute](https://github.com/spatie/laravel-route-attributes).
 
 #### Available Class Target
 ```php

@@ -24,9 +24,9 @@ class PreloadsTest extends TestCase
         $this->cacheRoute();
 
         $this->assertRegisteredRoutesCount(5);
-        static::assertTrue($this->app->routesAreCached());
+        self::assertTrue($this->app->routesAreCached());
 
-        static::assertNotNull($this->getRouter()->getBindingCallback('user'));
+        self::assertNotNull($this->getRouter()->getBindingCallback('user'));
     }
 
     public function test_preloads_called_when_route_not_cached(): void
@@ -36,8 +36,8 @@ class PreloadsTest extends TestCase
             ->register();
 
         $this->assertRegisteredRoutesCount(5);
-        static::assertNotTrue($this->app->routesAreCached());
+        self::assertNotTrue($this->app->routesAreCached());
 
-        static::assertNotNull($this->getRouter()->getBindingCallback('user'));
+        self::assertNotNull($this->getRouter()->getBindingCallback('user'));
     }
 }

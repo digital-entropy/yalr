@@ -39,7 +39,7 @@ class TestCase extends Orchestra
     {
         $actualNumber = $this->getRouteCollection()->count();
 
-        static::assertSame($expectedNumber, $actualNumber);
+        self::assertSame($expectedNumber, $actualNumber);
 
         return $this;
     }
@@ -58,7 +58,7 @@ class TestCase extends Orchestra
         }
 
         $routeRegistered = collect($this->getRouteCollection()->getRoutes())
-            ->contains(function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain) {
+            ->contains(static function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain) {
                 if (!\in_array(strtoupper($httpMethod), $route->methods, true)) {
                     return false;
                 }
@@ -93,7 +93,7 @@ class TestCase extends Orchestra
                 return true;
             });
 
-        static::assertTrue($routeRegistered, 'The expected route was not registered');
+        self::assertTrue($routeRegistered, 'The expected route was not registered');
 
         return $this;
     }
@@ -120,7 +120,7 @@ class TestCase extends Orchestra
             $this->app->getCachedRoutesPath(), $content,
         );
 
-        static::assertTrue(
+        self::assertTrue(
             $files->exists(base_path('bootstrap/cache/routes-v7.php'))
         );
 
@@ -129,7 +129,7 @@ class TestCase extends Orchestra
         }
 
 
-        $this->beforeApplicationDestroyed(function () use ($files) {
+        $this->beforeApplicationDestroyed(static function () use ($files) {
             $files->delete(
                 base_path('bootstrap/cache/routes-v7.php'),
                 ...$files->glob(base_path('routes/testbench-*.php'))

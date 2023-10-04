@@ -33,8 +33,8 @@ class RouteAttributeRegistrar extends RouteRegistrar
         $attributes = $class->getAttributes(RouteAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
 
         $options = collect($attributes)
-            ->map(fn(ReflectionAttribute $attribute) => $attribute->newInstance())
-            ->reduce(function ($carry, RouteAttribute $attribute) {
+            ->map(static fn(ReflectionAttribute $attribute) => $attribute->newInstance())
+            ->reduce(static function ($carry, RouteAttribute $attribute) {
                 switch (true) {
                     case $attribute instanceof Name:
                         $carry['as'] = $attribute->name;

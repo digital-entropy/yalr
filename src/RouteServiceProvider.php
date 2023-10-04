@@ -39,8 +39,8 @@ class RouteServiceProvider extends BaseRouteServiceProvider
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton(RouterFactory::SERVICE_NAME, function () {
-            return new RouterFactory(fn () => [
+        $this->app->singleton(RouterFactory::SERVICE_NAME, static function () {
+            return new RouterFactory(static fn () => [
                 Container::getInstance()['config'],
                 Container::getInstance()['router'],
             ]);
