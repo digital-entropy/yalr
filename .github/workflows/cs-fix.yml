@@ -4,12 +4,12 @@ on:
     branches: [ master ]
 jobs:
   php-cs-fixer:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: 'digitalentropybot'
           commit_user_email: 'dev@digitalentropy.co.id'
