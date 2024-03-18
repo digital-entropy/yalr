@@ -36,8 +36,13 @@ composer require dentro/yalr
 ```
 
 ### Requirements
- - PHP : "^8.0"
- - Laravel : "^8.0|^9.0"
+| PHP | Laravel | Yalr |
+|-----|---------|------|
+| 8.0 | 8.0     | 1.0  |
+| 8.1 | 9.0     | 1.1  |
+| 8.2 | 10.0    | 1.2  |
+| 8.3 | 11.0    | 1.3  |
+
 
 ### Applying into your project
 Run command in your project 
