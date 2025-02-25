@@ -42,7 +42,7 @@ composer require dentro/yalr
 | 9.x     | ^1.1 |
 | 10.x    | ^1.2 |
 | 11.x    | ^1.3 |
-
+| 12.x    | ^1.4 |
 
 ### Applying into your project
 Run command in your project 
