@@ -19,8 +19,6 @@ interface Bindable
     /**
      * Bind and register the current route.
      * remove static calling.
-     *
-     * @return void
      */
     public function bind(): void;
 }

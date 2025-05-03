@@ -19,43 +19,31 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Route path prefix.
-     *
-     * @var string
      */
     protected string $prefix = '/';
 
     /**
      * Registered route name.
-     *
-     * @var string
      */
     protected string $name;
 
     /**
      * Middleware used in route.
-     *
-     * @var array|string
      */
     protected array|string $middleware;
 
     /**
      * Middleware excluded in route.
-     *
-     * @var array|string
      */
     protected array|string $withoutMiddleware;
 
     /**
      * Route for specific domain.
-     *
-     * @var string
      */
     protected string $domain;
 
     /**
      * Route for specific regular expression.
-     *
-     * @var array|string
      */
     protected array|string $regex;
 
@@ -68,12 +56,10 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Bind and register the current route.
-     *
-     * @return void
      */
     public function bind(): void
     {
-        $this->router->group($this->getRouteGroupOptions(), function () {
+        $this->router->group($this->getRouteGroupOptions(), function (): void {
             $this->register();
         });
 
@@ -82,8 +68,6 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Perform after register callback.
-     *
-     * @return void
      */
     public function afterRegister(): void
     {
@@ -92,17 +76,13 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Register routes handled by this class.
-     *
-     * @return void
      */
     abstract public function register(): void;
 
     /**
      * Get route prefix.
      *
-     * @param string $path
      *
-     * @return string
      */
     #[Pure]
     public function prefix(string $path = '/'): string
@@ -114,10 +94,9 @@ abstract class BaseRoute implements Bindable, Registerable
      * Remove slash
      *
      * @param $path
-     * @return string
      */
     #[Pure]
-    private function removeSlashes($path): string
+    private function removeSlashes(string $path): string
     {
         return ltrim(rtrim($path, '/'), '/');
     }
@@ -126,10 +105,9 @@ abstract class BaseRoute implements Bindable, Registerable
      * Merge path from prefix property and path input
      *
      * @param $path
-     * @return string
      */
     #[Pure]
-    private function mergePath($path): string
+    private function mergePath(string $path): string
     {
         $prefix = $this->removeSlashes($this->prefix);
         $path = $this->removeSlashes($path);
@@ -141,25 +119,21 @@ abstract class BaseRoute implements Bindable, Registerable
      * Get route name.
      *
      * @param string|null $suffix
-     *
-     * @return string
      */
     #[Pure]
     public function name(string $suffix = null): string
     {
-        if (empty($suffix)) {
+        if ($suffix === null || $suffix === '' || $suffix === '0') {
             return $this->getBaseName(false);
         }
 
-        return (empty($this->name ?? null) ? $suffix : $this->getBaseName() . $suffix);
+        return (($this->name ?? null) === null || ($this->name ?? null) === '' || ($this->name ?? null) === '0' ? $suffix : $this->getBaseName() . $suffix);
     }
 
     /**
      * Get Base name.
      *
-     * @param bool $dotSuffix
      *
-     * @return string
      */
     private function getBaseName(bool $dotSuffix = true): string
     {
@@ -168,26 +142,24 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Get Route Binder Options.
-     *
-     * @return array
      */
     public function getRouteGroupOptions(): array
     {
         $options = [];
 
-        if (isset($this->middleware) && !empty($this->middleware)) {
+        if (isset($this->middleware) && (isset($this->middleware) && ($this->middleware !== '' && $this->middleware !== '0' && $this->middleware !== []))) {
             $options['middleware'] = $this->middleware;
         }
 
-        if (isset($this->withoutMiddleware) && !empty($this->withoutMiddleware)) {
+        if (isset($this->withoutMiddleware) && (isset($this->withoutMiddleware) && ($this->withoutMiddleware !== '' && $this->withoutMiddleware !== '0' && $this->withoutMiddleware !== []))) {
             $options['withoutMiddleware'] = $this->withoutMiddleware;
         }
 
-        if (isset($this->domain) && !empty($this->domain)) {
+        if (isset($this->domain) && (isset($this->domain) && ($this->domain !== '' && $this->domain !== '0'))) {
             $options['domain'] = $this->domain;
         }
 
-        if (!empty($this->regex)) {
+        if (isset($this->regex) && ($this->regex !== '' && $this->regex !== '0' && $this->regex !== [])) {
             $options['regex'] = $this->regex;
         }
 

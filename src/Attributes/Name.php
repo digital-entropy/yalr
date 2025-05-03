@@ -17,7 +17,7 @@ class Name implements RouteAttribute
         }
 
         if ($dotSuffix) {
-            $this->name = $this->name.'.';
+            $this->name .= '.';
         }
     }
 }

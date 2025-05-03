@@ -10,7 +10,7 @@ class SimpleRoute extends BaseRoute
     {
         $this->router->get($this->prefix('foo'), [
             'as' => 'foo',
-            'uses' => static fn() => 'bar',
+            'uses' => static fn(): string => 'bar',
         ]);
     }
 }

@@ -23,7 +23,8 @@ class PreloadsTest extends TestCase
 
         $this->cacheRoute();
 
-        $this->assertRegisteredRoutesCount(5);
+        $this->assertRegisteredRoutesCount(6); // 5 + 1 (from FilesystemServiceProvider::serveFiles())
+        // inside cache route
         self::assertTrue($this->app->routesAreCached());
 
         self::assertNotNull($this->getRouter()->getBindingCallback('user'));
@@ -35,7 +36,7 @@ class PreloadsTest extends TestCase
             ->make(groupName: 'foo', items: [GetTestController::class])
             ->register();
 
-        $this->assertRegisteredRoutesCount(5);
+        $this->assertRegisteredRoutesCount(6); // 5 + 1 (from FilesystemServiceProvider::serveFiles())
         self::assertNotTrue($this->app->routesAreCached());
 
         self::assertNotNull($this->getRouter()->getBindingCallback('user'));

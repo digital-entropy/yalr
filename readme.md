@@ -6,38 +6,41 @@
 [![Total Downloads](https://poser.pugx.org/dentro/yalr/downloads)](https://packagist.org/packages/dentro/yalr)
 [![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
-
 Define Laravel routes in different ways using [Class Wrapper Route](#class-wrapper-route) or [Route Attribute](#route-attribute)
 
 Previously known as [jalameta/router](https://github.com/jalameta/jps-router).<br><br>
 
 ### TABLE OF CONTENT
- - [Installation](#installation)
- - [Requirements](#requirements)
- - [Applying into your project](#applying-into-your-project)
- - [Usage](#usage)
-    - [Class Wrapper Route](#class-wrapper-route)
-        - [Creating New Route](#creating-new-route)
-        - [Route Configuration](#routes-configuration)
-        - [Class Structure](#class-structure)
-        - [Using Controller](#using-controller)
-        - [Route Prefix](#route-prefix)
-        - [Route Name](#route-name)
-    - [Preloads](#preloads)
-    - [Route Attribute](#route-attribute)
-        - [Available Class Target](#available-class-target)
-        - [Available Method Target](#available-method-target)
-        - [Added To Configuration Route](#added-to-configuration-route)
+
+-   [Installation](#installation)
+-   [Requirements](#requirements)
+-   [Applying into your project](#applying-into-your-project)
+-   [Usage](#usage)
+    -   [Class Wrapper Route](#class-wrapper-route)
+        -   [Creating New Route](#creating-new-route)
+        -   [Route Configuration](#routes-configuration)
+        -   [Class Structure](#class-structure)
+        -   [Using Controller](#using-controller)
+        -   [Route Prefix](#route-prefix)
+        -   [Route Name](#route-name)
+    -   [Preloads](#preloads)
+    -   [Route Attribute](#route-attribute)
+        -   [Available Class Target](#available-class-target)
+        -   [Available Method Target](#available-method-target)
+        -   [Added To Configuration Route](#added-to-configuration-route)
 
 ### Installation
+
 Using composer :
+
 ```shell
 composer require dentro/yalr
 ```
 
 ### Requirements
+
 | Laravel | Yalr |
-|---------|------|
+| ------- | ---- |
 | 8.x     | ^1.0 |
 | 9.x     | ^1.1 |
 | 10.x    | ^1.2 |
@@ -45,55 +48,59 @@ composer require dentro/yalr
 | 12.x    | ^1.4 |
 
 ### Applying into your project
-Run command in your project 
+
+Run command in your project
+
 ```shell
-php artisan yalr:install {--remove}
+php artisan yalr:install
 ```
-
-If you're deciding to remove the original laravel routes, you might add `--remove` option within the command. So the 
-command will be 
-
-> YALR will configure the routes for you, the Laravel default `routes` folder will be **deleted**. So backup your 
-> defined routes first.
 
 ### Usage
 
 ### Class Wrapper Route
-Class wrapper route is our effort to make routing in laravel more expressive and separated. We usually make route that 
-representative with namespace for easy to understand. For example, class `App\Admin\TransactionRoute` will represent 
+
+Class wrapper route is our effort to make routing in laravel more expressive and separated. We usually make route that
+representative with namespace for easy to understand. For example, class `App\Admin\TransactionRoute` will represent
 route `/app/admin/transaction`.
 
 #### Creating new route
 
-To make a new route just run: 
+To make a new route just run:
+
 ```shell
 php artisan make:route DefaultRoute
 ```
-After running command above, the route named `DefaultRoute` will appear in `app/Http/Routes/DefaultRoute.php`. After 
+
+After running command above, the route named `DefaultRoute` will appear in `app/Http/Routes/DefaultRoute.php`. After
 creating routes, it will not be loaded automatically, you must register the Route Class in the route configuration.
 
 ##### make:route options
+
 1. Inject
-Inject is useful options to auto adding the route class name within route configuration, so you don't need to add it 
-   manually. E.g: 
+   Inject is useful options to auto adding the route class name within route configuration, so you don't need to add it
+   manually. E.g:
+
 ```shell
 php artisan make:route DefaultRoute --inject web
 ```
+
 Command above will make the Default route within the web groups that defined in `config/routes.php`.
 
 2. Controller
-The controller option will generate the route and the controller used by the route. So you don't need to run 2 artisan 
+   The controller option will generate the route and the controller used by the route. So you don't need to run 2 artisan
    command to create a new controller and route.
+
 ```shell
 php artisan make:route DefaultRoute --controller HomeController
 ```
 
 3. Help
-Shows YALR command helps
+   Shows YALR command helps
 
 #### Routes Configuration
 
-Below is an example of YALR configurations. 
+Below is an example of YALR configurations.
+
 ```php
 return [
     'groups' => [
@@ -115,13 +122,15 @@ return [
         /** @inject api **/
     ],
 ];
- ```
-As you can see, `groups` index is group configuration, you can pass any laravel options there such as `as`, `domain`, 
+```
+
+As you can see, `groups` index is group configuration, you can pass any laravel options there such as `as`, `domain`,
 `middleware`, `prefix`, etc. Afterward, the `web` and `api` are group index defined before in the `groups` index. It is an array of route class names.
 
 #### Class Structure
 
-After creating a route with the command, we will see the example of the generated file. 
+After creating a route with the command, we will see the example of the generated file.
+
 ```php
 <?php
 
@@ -144,10 +153,12 @@ class DefaultRoute extends BaseRoute
 }
 
 ```
+
 After creating a route with the command, we will see the example of the generated file. We can define routes within the
-register method. All you need is to call $this->router as a router instance. Then, we can invoke the laravel routing method such as post, put, etc. See 
-[Laravel Routing Docs](https://laravel.com/docs/9.x/routing). 
-> Avoid using closure action, otherwise your application will encounter error when routes were cached. 
+register method. All you need is to call $this->router as a router instance. Then, we can invoke the laravel routing method such as post, put, etc. See
+[Laravel Routing Docs](https://laravel.com/docs/9.x/routing).
+
+> Avoid using closure action, otherwise your application will encounter error when routes were cached.
 
 ```php
 <?php
@@ -160,9 +171,9 @@ class DefaultRoute extends BaseRoute
 {
 
     protected string $prefix = 'wonderful';
-    
+
     protected string $name = 'wonderful';
-    
+
     /**
      * Register routes handled by this class.
      *
@@ -177,9 +188,11 @@ class DefaultRoute extends BaseRoute
 }
 ```
 
-##### Using Controller 
-From create route command, we know we can pass the controller namespace. The created controller will show up in the 
+##### Using Controller
+
+From create route command, we know we can pass the controller namespace. The created controller will show up in the
 route class as a controller method.
+
 ```php
 <?php
 
@@ -201,38 +214,45 @@ class DefaultRoute extends BaseRoute
             'uses' => $this->uses('index')
         ]);
     }
-    
+
      /**
      * Controller used by this route.
      *
      * @return string
      */
-    public function controller(): string 
+    public function controller(): string
     {
         return HomeController::class;
     }
 }
 ```
 
-The route above is equal with 
+The route above is equal with
+
 ```php
 Route::get('/', [
     'uses' => "App\Http\Controllers\HomeController@index"
 ]);
 ```
-This package want to solve those duplicated namespace and class name several times as we define the routes. 
-Or if you don't want to use the controller in the route class, you can pass the second parameter of `$this->uses()` 
+
+This package want to solve those duplicated namespace and class name several times as we define the routes.
+Or if you don't want to use the controller in the route class, you can pass the second parameter of `$this->uses()`
 method with the controller class name to be used, E.g : `$this->uses('login', LoginController::class)`.
+
 ##### Route Prefix
+
 Override the route prefix defined in the class property. Default prefix is '/';
-> `protected string $prefix = '/home';` 
+
+> `protected string $prefix = '/home';`
 
 ```php
 $this->router->get($this->prefix(), [
     'uses' => $this->uses('index')
 ]);
 ```
+
 The route above is equal with
+
 ```php
 Route::get('/home', [
     'uses' => "App\Http\Controllers\HomeController@index"
@@ -240,10 +260,12 @@ Route::get('/home', [
 ```
 
 ##### Route Name
-You need to define the route name property within the route class 
-> `protected string $name = 'home';` 
 
-Later we can use `$this->name()` method for adding separation with dot (.) between the route group name, and the single 
+You need to define the route name property within the route class
+
+> `protected string $name = 'home';`
+
+Later we can use `$this->name()` method for adding separation with dot (.) between the route group name, and the single
 route name
 
 ```php
@@ -253,7 +275,8 @@ $this->router->get('/', [
 ]);
 ```
 
-It equal with 
+It equal with
+
 ```php
 Route::get('/', [
     'as' => 'home.landing',
@@ -262,7 +285,9 @@ Route::get('/', [
 ```
 
 ### Preloads
-Preloads always run even though routes been cached. It might be the good place to put route model binding and rate limiter there.<br> Example : 
+
+Preloads always run even though routes been cached. It might be the good place to put route model binding and rate limiter there.<br> Example :
+
 ```php
 // config/routes.php
 
@@ -271,12 +296,13 @@ Preloads always run even though routes been cached. It might be the good place t
     App\Http\RouteRateLimiter::class,
 ],
 ```
+
 ```php
 namespace App\Http;
 
 use Dentro\Yalr\Contracts\Bindable;
 
-class RouteModelBinding implements Bindable 
+class RouteModelBinding implements Bindable
 {
     public function __construct(protected Router $router)
     {
@@ -289,12 +315,13 @@ class RouteModelBinding implements Bindable
     }
 }
 ```
+
 ```php
 namespace App\Http;
 
 use Dentro\Yalr\Contracts\Bindable;
 
-class RouteRateLimiter implements Bindable 
+class RouteRateLimiter implements Bindable
 {
     public function __construct(protected Router $router)
     {
@@ -309,9 +336,10 @@ class RouteRateLimiter implements Bindable
 }
 ```
 
-
 ### Route Attribute
+
 PHP 8 comes up with a nice feature called `Attribute` see [this link](https://www.php.net/releases/8.0/en.php#attributes) for the detail. So we added those feature to this package for us to create something like the example below.
+
 ```php
 #[Middleware(['auth:sanctum', 'verified'])]
 class DashboardController extends Controller
@@ -325,6 +353,7 @@ class DashboardController extends Controller
 ```
 
 #### Available Class Target
+
 ```php
 Dentro\Yalr\Attributes\Domain(string $domain);
 Dentro\Yalr\Attributes\Prefix($prefix);
@@ -333,6 +362,7 @@ Dentro\Yalr\Attributes\Middleware(string | array $middleware);
 ```
 
 #### Available Method Target
+
 ```php
 Dentro\Yalr\Attributes\Get(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
 Dentro\Yalr\Attributes\Post(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
@@ -344,9 +374,10 @@ Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string 
 ```
 
 #### Added To Configuration Route
+
 just put class to your route configuration and yalr will figure it out what to do with your controller.
 
-```php 
+```php
     'web' => [
         /** @inject web **/
 	\App\Http\Routes\DefaultRoute::class,

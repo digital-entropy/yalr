@@ -1,63 +1,78 @@
 {
-  "name": "dentro/yalr",
-  "description": "Class base routing for laravel application.",
-  "require": {
-    "php": "^8.0",
-    "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/console": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/routing": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0",
-    "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0"
-  },
-  "require-dev": {
-    "orchestra/testbench": "^10.0",
-    "phpunit/phpunit": "^11.0",
-    "jetbrains/phpstorm-attributes": "^1.0",
-    "roave/security-advisories": "dev-latest"
-  },
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Rifki Alhuraibi",
-      "email": "veelasky@gmail.com"
+    "name": "dentro/yalr",
+    "description": "Class base routing for laravel application.",
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/console": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/routing": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0"
     },
-    {
-      "name": "Muhajirin Ilyas",
-      "email": "muhajirinlpu@gmail.com"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Dentro\\Yalr\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Dentro\\Yalr\\Tests\\": "tests"
-    }
-  },
-  "scripts": {
-    "test": "vendor/bin/phpunit --colors=always",
-    "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-    "post-autoload-dump": [
-      "@php ./vendor/bin/testbench package:discover --ansi"
-    ]
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Dentro\\Yalr\\RouteServiceProvider"
-      ]
+    "require-dev": {
+        "orchestra/testbench": "^10.2",
+        "phpunit/phpunit": "^12.0",
+        "roave/security-advisories": "dev-latest",
+        "rector/rector": "*"
     },
-    "branch-alias": {
-      "dev-master": "1.0-dev"
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rifki Alhuraibi",
+            "email": "veelasky@gmail.com"
+        },
+        {
+            "name": "Muhajirin Ilyas",
+            "email": "muhajirinlpu@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dentro\\Yalr\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dentro\\Yalr\\Tests\\": "tests",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "lint": [
+            "@php vendor/bin/phpstan analyse --verbose --ansi"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dentro\\Yalr\\YalrServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     }
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/package-versions-deprecated": true
-    }
-  }
 }

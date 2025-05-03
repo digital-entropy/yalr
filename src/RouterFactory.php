@@ -5,14 +5,11 @@ namespace Dentro\Yalr;
 use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Router;
-use JetBrains\PhpStorm\Pure;
 use OutOfBoundsException;
 use ReflectionClass;
 use RuntimeException;
 use Illuminate\Support\Collection;
 use Dentro\Yalr\Contracts\Bindable;
-use function array_key_exists;
-use function in_array;
 
 /**
  * Router Factory.
@@ -27,15 +24,11 @@ class RouterFactory
 
     /**
      * Route groups.
-     *
-     * @var array
      */
     protected array $routes = [];
 
     /**
      * List of all options.
-     *
-     * @var array
      */
     protected array $options = [];
 
@@ -44,27 +37,22 @@ class RouterFactory
      *
      * @param \Closure $resolver should return [Config, Router]
      */
-    #[Pure]
     public function __construct(
         protected Closure $resolver
     ) {}
 
-    /**
-     * @param bool $fake
-     */
     public static function fake(bool $fake = true): void
     {
         self::$fake = $fake;
     }
 
     /**
-     * Create new route group.
+     * Create a new route group.
      *
      * @param       $groupName
      * @param array $options
      * @param array $items
-     *
-     * @return \Dentro\Yalr\RouterFactory
+     * @return RouterFactory
      */
     public function make($groupName, array $options = [], array $items = []): self
     {
@@ -90,9 +78,7 @@ class RouterFactory
     }
 
     /**
-     * Register to route group.
-     *
-     * @return void
+     * Register to a route group.
      */
     public function register(): void
     {
@@ -110,7 +96,6 @@ class RouterFactory
     }
 
     /**
-     * @return void
      * @throws \ReflectionException
      */
     public function registerPreloads(): void
@@ -139,9 +124,6 @@ class RouterFactory
 
     /**
      * Get config for routes
-     *
-     * @param \Illuminate\Config\Repository $config
-     * @return void
      */
     protected function resolveRouteFromConfig(Repository $config): void
     {
@@ -159,16 +141,13 @@ class RouterFactory
     /**
      * Map all routes into laravel routes.
      *
-     * @param \Illuminate\Routing\Router $router
-     * @param string $groupName
      *
-     * @return void
      */
     public function map(Router $router, string $groupName): void
     {
         if (\array_key_exists($groupName, $this->routes)) {
             $router->group($this->getOptions($groupName),
-                fn() => collect($this->get($groupName))->each(
+                fn() => \collect($this->get($groupName))->each(
                     fn($class) => $this->classRouteRegistrar($router, $class)
                 )
             );
@@ -176,7 +155,7 @@ class RouterFactory
     }
 
     /**
-     * Get options for specific route group.
+     * Get options for a specific route group.
      *
      * @param $key
      * @return mixed
@@ -190,8 +169,7 @@ class RouterFactory
      * Get Route Group container by its key.
      *
      * @param $key
-     *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function get($key): Collection
     {
@@ -204,10 +182,7 @@ class RouterFactory
 
     /**
      * List of all registered route groups.
-     *
-     * @return array
      */
-    #[Pure]
     public function groups(): array
     {
         return array_keys($this->routes);
@@ -215,8 +190,6 @@ class RouterFactory
 
     /**
      * Return all registered route.
-     *
-     * @return array
      */
     public function all(): array
     {
@@ -226,8 +199,6 @@ class RouterFactory
     /**
      * Register class
      *
-     * @param \Illuminate\Routing\Router $router
-     * @param string $class
      * @throws \ReflectionException
      */
     private function classRouteRegistrar(Router $router, string $class): void
