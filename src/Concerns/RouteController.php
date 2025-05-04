@@ -25,7 +25,7 @@ trait RouteController
      * @param $method string
      * @param string|null $controller
      */
-    public function uses(string $method, string $controller = null): string
+    public function uses(string $method, string|null $controller = null): string
     {
         if (($controller === null || $controller === '' || $controller === '0') && ! method_exists($this, 'controller')) {
             throw new RuntimeException('Controller is not defined.');

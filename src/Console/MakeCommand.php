@@ -7,49 +7,19 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * Make Command.
- *
- * @author      veelasky <veelasky@gmail.com>
- */
 class MakeCommand extends GeneratorCommand
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
     protected $name = 'make:route';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Create a new YALR';
 
-    /**
-     * The type of class being generated.
-     *
-     * @var string
-     */
     protected $type = 'Route';
 
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param $rootNameSpace
-     */
-    public function getDefaultNamespace($rootNameSpace): string
+    public function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNameSpace.'\Http\Routes';
+        return $rootNamespace.'\Http\Routes';
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     public function handle(): int
     {
         parent::handle();
@@ -57,9 +27,6 @@ class MakeCommand extends GeneratorCommand
         return 0;
     }
 
-    /**
-     * Get the stub file for the generator.
-     */
     protected function getStub(): string
     {
         $stub = $this->option('controller') ? '/../../stubs/route.controller.stub' : '/../../stubs/route.stub';
@@ -67,12 +34,6 @@ class MakeCommand extends GeneratorCommand
         return __DIR__.$stub;
     }
 
-    /**
-     * Build the class with the given name.
-     *
-     * @param  string $name
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     protected function buildClass($name): string
     {
         if ($this->option('inject') !== null) {
@@ -98,9 +59,6 @@ class MakeCommand extends GeneratorCommand
         return parent::buildClass($name);
     }
 
-    /**
-     * Generate new controller class.
-     */
     protected function buildController(): void
     {
         $this->call('make:controller', [
@@ -108,19 +66,11 @@ class MakeCommand extends GeneratorCommand
         ]);
     }
 
-    /**
-     * Get Controller class name without namespace.
-     */
     protected function getControllerClassname(): string
     {
         return str_replace(array($this->getNamespace($this->getNameInput()) . '\\', $this->type), array('', 'Controller'), $this->getNameInput());
     }
 
-    /**
-     * Inject Route to `routes.php`.
-     *
-     * @param $name
-     */
     protected function injectRouteClass($name): void
     {
         $route_group = $this->option('inject');
@@ -132,9 +82,6 @@ class MakeCommand extends GeneratorCommand
         }
     }
 
-    /**
-     * Get the console command options.
-     */
     protected function getOptions(): array
     {
         return [

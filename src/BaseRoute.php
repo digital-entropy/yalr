@@ -6,7 +6,6 @@ use Dentro\Yalr\Contracts\Bindable;
 use Dentro\Yalr\Concerns\RouteController;
 use Dentro\Yalr\Contracts\Registerable;
 use Illuminate\Routing\Router;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Base router class.
@@ -84,7 +83,6 @@ abstract class BaseRoute implements Bindable, Registerable
      *
      *
      */
-    #[Pure]
     public function prefix(string $path = '/'): string
     {
         return $this->prefix === '/' ? $path : $this->mergePath($path);
@@ -95,7 +93,6 @@ abstract class BaseRoute implements Bindable, Registerable
      *
      * @param $path
      */
-    #[Pure]
     private function removeSlashes(string $path): string
     {
         return ltrim(rtrim($path, '/'), '/');
@@ -106,7 +103,6 @@ abstract class BaseRoute implements Bindable, Registerable
      *
      * @param $path
      */
-    #[Pure]
     private function mergePath(string $path): string
     {
         $prefix = $this->removeSlashes($this->prefix);
@@ -120,8 +116,7 @@ abstract class BaseRoute implements Bindable, Registerable
      *
      * @param string|null $suffix
      */
-    #[Pure]
-    public function name(string $suffix = null): string
+    public function name(string|null $suffix = null): string
     {
         if ($suffix === null || $suffix === '' || $suffix === '0') {
             return $this->getBaseName(false);

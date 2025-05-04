@@ -4,6 +4,7 @@ namespace Dentro\Yalr\Tests;
 
 use Dentro\Yalr\Helpers\YalrConfig;
 use Dentro\Yalr\Console\MakeCommand;
+use Dentro\Yalr\YalrServiceProvider;
 use Orchestra\Testbench\TestCase;
 use Mockery;
 
@@ -100,11 +101,11 @@ PHP;
             ->injectRouteClass('App\Http\Routes\TestRoute');
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         // Comment out until we have an actual service provider to use
         return [
-            'Dentro\Yalr\YalrServiceProvider',
+            YalrServiceProvider::class,
         ];
     }
 }

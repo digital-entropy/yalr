@@ -192,7 +192,7 @@ PHP;
     {
         // Assert
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Section name cannot be empty');
+        $this->expectExceptionMessage('Group name cannot be empty');
 
         // Act
         YalrConfig::add('', '\App\Test::class');
@@ -202,7 +202,7 @@ PHP;
     {
         // Assert
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Class name cannot be empty');
+        $this->expectExceptionMessage('Route cannot be empty');
 
         // Act
         YalrConfig::add('web', '');
@@ -216,7 +216,7 @@ PHP;
         // Assert
         $this->assertEquals($this->tempConfigFile, $path);
 
-        // Reset and check default path
+        // Reset and check the default path
         YalrConfig::resetConfigPath();
         $defaultPath = YalrConfig::getConfigPath();
 
@@ -243,13 +243,13 @@ return [
             'prefix' => 'api/v1',
         ],
     ],
+    /*
+     * Multi-line comment
+     * in web section
+     */
     'web' => [
         // Comment in web section
         \App\Http\Routes\DefaultRoute::class,
-        /*
-         * Multi-line comment
-         * in web section
-         */
     ],
     'api' => [
         // API routes
