@@ -149,4 +149,76 @@ PHP;
         $this->assertStringContainsString("\$this->router->get('users', function () {", $transformedContent);
         $this->assertStringNotContainsString('Route::get', $transformedContent);
     }
+
+    public function testTransformRouteGroupWithMiddleware(): void
+    {
+        $originalContent = <<<'PHP'
+    <?php
+
+    use Illuminate\Support\Facades\Route;
+    use Illuminate\Support\Facades\Inertia;
+    use App\Http\Controllers\ProfileController;
+    use App\Http\Controllers\PasswordController;
+
+    Route::middleware('auth')->group(function () {
+    Route::redirect('settings', '/settings/profile');
+
+    Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('settings/password', [PasswordController::class, 'update'])->name('password.update');
+
+    Route::get('settings/appearance', function () {
+        return Inertia::render('settings/Appearance');
+    })->name('appearance');
+    });
+    PHP;
+
+        $transformedContent = $this->transformer->transformRouteFile(
+            $originalContent,
+            'SettingsRoute',
+            'App\\Http\\Routes'
+        );
+
+        $this->assertNotNull($transformedContent);
+        $this->assertStringContainsString('namespace App\\Http\\Routes;', $transformedContent);
+
+        // Check required use statements are present
+        $this->assertStringContainsString('use Illuminate\Support\Facades\Route;', $transformedContent);
+        $this->assertStringContainsString('use Illuminate\Support\Facades\Inertia;', $transformedContent);
+        $this->assertStringContainsString('use App\Http\Controllers\ProfileController;', $transformedContent);
+        $this->assertStringContainsString('use App\Http\Controllers\PasswordController;', $transformedContent);
+        $this->assertStringContainsString('use Dentro\Yalr\BaseRoute;', $transformedContent);
+
+        // Check the class definition
+        $this->assertStringContainsString('class SettingsRoute extends BaseRoute', $transformedContent);
+
+        // Check for middleware group transformation
+        $this->assertStringContainsString('$this->router->middleware(\'auth\')->group(function () {', $transformedContent);
+
+        // Check route redirect transformation
+        $this->assertStringContainsString('$this->router->redirect(\'settings\', \'/settings/profile\');', $transformedContent);
+
+        // Check route controller transformations
+        $this->assertStringContainsString('$this->router->get(\'settings/profile\', [ProfileController::class, \'edit\'])->name(\'profile.edit\');', $transformedContent);
+        $this->assertStringContainsString('$this->router->patch(\'settings/profile\', [ProfileController::class, \'update\'])->name(\'profile.update\');', $transformedContent);
+        $this->assertStringContainsString('$this->router->delete(\'settings/profile\', [ProfileController::class, \'destroy\'])->name(\'profile.destroy\');', $transformedContent);
+        $this->assertStringContainsString('$this->router->get(\'settings/password\', [PasswordController::class, \'edit\'])->name(\'password.edit\');', $transformedContent);
+        $this->assertStringContainsString('$this->router->put(\'settings/password\', [PasswordController::class, \'update\'])->name(\'password.update\');', $transformedContent);
+
+        // Check closure route transformation
+        $this->assertStringContainsString('$this->router->get(\'settings/appearance\', function () {', $transformedContent);
+        $this->assertStringContainsString('return Inertia::render(\'settings/Appearance\');', $transformedContent);
+        $this->assertStringContainsString('})->name(\'appearance\');', $transformedContent);
+
+        // Ensure original Route facade usage is gone
+        $this->assertStringNotContainsString('Route::middleware', $transformedContent);
+        $this->assertStringNotContainsString('Route::redirect', $transformedContent);
+        $this->assertStringNotContainsString('Route::get', $transformedContent);
+        $this->assertStringNotContainsString('Route::patch', $transformedContent);
+        $this->assertStringNotContainsString('Route::delete', $transformedContent);
+        $this->assertStringNotContainsString('Route::put', $transformedContent);
+    }
 }

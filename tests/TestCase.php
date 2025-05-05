@@ -171,10 +171,10 @@ class TestCase extends Orchestra
     /**
      * Filter out routes with closure actions to prevent serialization issues during route caching
      *
-     * @param RouteCollection|CompiledRouteCollection $routes
+     * @param CompiledRouteCollection|RouteCollection $routes
      * @return RouteCollection
      */
-    protected function sanitizeClosure($routes): RouteCollection
+    protected function sanitizeClosure(CompiledRouteCollection|RouteCollection $routes): RouteCollection
     {
         $filteredRoutes = new RouteCollection();
 
