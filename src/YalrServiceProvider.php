@@ -49,6 +49,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
                 Console\InstallCommand::class,
                 Console\DisplayCommand::class,
                 Console\MakeCommand::class,
+                Console\GenerateCommand::class,
             ]);
         }
     }
