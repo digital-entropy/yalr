@@ -4,6 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Injects Configuration
+    |--------------------------------------------------------------------------
+    | Specify directories to scan for controller auto-injection
+    | Keys correspond to route groups where controllers should be injected
+    | Values are arrays of directory paths to scan for controllers
+    */
+
+    'injects' => [
+        'web' => [],
+        'api' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Preloads
     |--------------------------------------------------------------------------
     | String of class name that instance of \Dentro\Yalr\Contracts\Bindable
@@ -50,9 +64,9 @@ return [
     */
 
     'web' => [
-        /** @inject web **/
+        //
     ],
     'api' => [
-        /** @inject api **/
+        //
     ],
 ];

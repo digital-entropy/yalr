@@ -19,8 +19,6 @@ class RouteAttributeRegistrar extends RouteRegistrar
 {
     /**
      * Registering some class to router
-     *
-     * @param string $className
      */
     public function registerClass(string $className): void
     {
@@ -33,8 +31,8 @@ class RouteAttributeRegistrar extends RouteRegistrar
         $attributes = $class->getAttributes(RouteAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
 
         $options = collect($attributes)
-            ->map(static fn(ReflectionAttribute $attribute) => $attribute->newInstance())
-            ->reduce(static function ($carry, RouteAttribute $attribute) {
+            ->map(static fn(ReflectionAttribute $attribute): \Dentro\Yalr\Attributes\RouteAttribute => $attribute->newInstance())
+            ->reduce(static function (array $carry, RouteAttribute $attribute): array {
                 switch (true) {
                     case $attribute instanceof Name:
                         $carry['as'] = $attribute->name;
@@ -61,16 +59,12 @@ class RouteAttributeRegistrar extends RouteRegistrar
             : $this->registerMethod($class);
     }
 
-    /**
-     * @param \ReflectionClass $class
-     * @return void
-     */
     protected function registerMethod(ReflectionClass $class): void
     {
         collect($class->getMethods())
-            ->each(function (ReflectionMethod $reflectionMethod) use ($class) {
+            ->each(function (ReflectionMethod $reflectionMethod) use ($class): void {
                 collect($reflectionMethod->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF))
-                    ->each(function (ReflectionAttribute $methodAttribute) use ($reflectionMethod, $class) {
+                    ->each(function (ReflectionAttribute $methodAttribute) use ($reflectionMethod, $class): void {
                         /** @var Route $attributeInstance */
                         $attributeInstance = $methodAttribute->newInstance();
 

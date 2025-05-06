@@ -4,33 +4,52 @@ namespace Dentro\Yalr\Tests;
 
 use Closure;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemServiceProvider;
 use Illuminate\Routing\CompiledRouteCollection;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Dentro\Yalr\RouterFactory;
-use Dentro\Yalr\RouteServiceProvider;
+use Dentro\Yalr\YalrServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
-        RouterFactory::fake();
+        // Use a static method for mocking instead of deprecated "fake" method
+        $this->mockRouterFactory();
 
         parent::setUp();
+    }
+
+    /**
+     * Mock the RouterFactory
+     */
+    protected function mockRouterFactory(): void
+    {
+        // Modern way to mock static functionality
+        if (method_exists(RouterFactory::class, 'fake')) {
+            RouterFactory::fake();
+        } elseif (method_exists(RouterFactory::class, 'shouldReceive')) {
+            RouterFactory::shouldReceive('create')->andReturnUsing(function(): \Dentro\Yalr\RouterFactory {
+                return new RouterFactory();
+            });
+        }
     }
 
     protected function getPackageProviders($app): array
     {
         return [
-            RouteServiceProvider::class,
+            YalrServiceProvider::class,
         ];
     }
 
-    public function getTestPath(string $directory = null): string
+    public function getTestPath(string|null $directory = null): string
     {
         return __DIR__ . ($directory ? '/' . $directory : '');
     }
@@ -47,10 +66,10 @@ class TestCase extends Orchestra
     public function assertRouteRegistered(
         string $httpMethod = 'get',
         string $uri = 'my-method',
-        string $controller = null,
+        string|null $controller = null,
         string $controllerMethod = 'myMethod',
-        ?string $name = null,
-        ?string $domain = null,
+        string|null $name = null,
+        string|null $domain = null,
         string | array $middleware = [],
     ): self {
         if (! \is_array($middleware)) {
@@ -58,7 +77,7 @@ class TestCase extends Orchestra
         }
 
         $routeRegistered = collect($this->getRouteCollection()->getRoutes())
-            ->contains(static function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain) {
+            ->contains(static function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain): bool {
                 if (!\in_array(strtoupper($httpMethod), $route->methods, true)) {
                     return false;
                 }
@@ -85,12 +104,7 @@ class TestCase extends Orchestra
                 if ($route->getName() !== $name) {
                     return false;
                 }
-
-                if ($route->getDomain() !== $domain) {
-                    return false;
-                }
-
-                return true;
+                return $route->getDomain() === $domain;
             });
 
         self::assertTrue($routeRegistered, 'The expected route was not registered');
@@ -114,7 +128,18 @@ class TestCase extends Orchestra
 
         $stub = $files->get(__DIR__.'/../vendor/laravel/framework/src/Illuminate/Foundation/Console/stubs/routes.stub');
 
-        $content = str_replace('{{routes}}', var_export($this->getRouteCollection()->compile(), true), $stub);
+        /**
+         * @see FilesystemServiceProvider::serveFiles()
+         * This method will disturb the caching route because it has a closure action.
+         * The generated route at ...bootstrap/cache/routes-v7.php will be broken
+         * and generate something like \Closure::__set_state()
+         */
+
+        // Filter out routes with closure actions before compiling to avoid serialization issues
+        $routes = $this->getRouteCollection();
+        $compilableRoutes = $this->sanitizeClosure($routes);
+
+        $content = str_replace('{{routes}}', var_export($compilableRoutes->compile(), true), $stub);
 
         $files->put(
             $this->app->getCachedRoutesPath(), $content,
@@ -127,7 +152,6 @@ class TestCase extends Orchestra
         if (isset($this->app)) {
             $this->reloadApplication();
         }
-
 
         $this->beforeApplicationDestroyed(static function () use ($files) {
             $files->delete(
@@ -142,5 +166,26 @@ class TestCase extends Orchestra
     protected function routerFactory(): RouterFactory
     {
         return $this->app->make(RouterFactory::class);
+    }
+
+    /**
+     * Filter out routes with closure actions to prevent serialization issues during route caching
+     *
+     * @param CompiledRouteCollection|RouteCollection $routes
+     * @return RouteCollection
+     */
+    protected function sanitizeClosure(CompiledRouteCollection|RouteCollection $routes): RouteCollection
+    {
+        $filteredRoutes = new RouteCollection();
+
+        foreach ($routes->getRoutes() as $route) {
+            if ($route->getAction('uses') instanceof Closure) {
+                $route->setAction([]);
+            }
+
+            $filteredRoutes->add($route);
+        }
+
+        return $filteredRoutes;
     }
 }

@@ -10,12 +10,10 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as BaseRouteSer
  *
  * @author      veelasky <veelasky@gmail.com>
  */
-class RouteServiceProvider extends BaseRouteServiceProvider
+class YalrServiceProvider extends BaseRouteServiceProvider
 {
     /**
      * Bootstrap any package services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -28,8 +26,6 @@ class RouteServiceProvider extends BaseRouteServiceProvider
 
     /**
      * Register bindings in the container.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -39,8 +35,8 @@ class RouteServiceProvider extends BaseRouteServiceProvider
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton(RouterFactory::SERVICE_NAME, static function () {
-            return new RouterFactory(static fn () => [
+        $this->app->singleton(RouterFactory::SERVICE_NAME, static function (): \Dentro\Yalr\RouterFactory {
+            return new RouterFactory(static fn (): array => [
                 Container::getInstance()['config'],
                 Container::getInstance()['router'],
             ]);
@@ -51,32 +47,30 @@ class RouteServiceProvider extends BaseRouteServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\InstallCommand::class,
-                Console\DisplayCommnad::class,
+                Console\DisplayCommand::class,
                 Console\MakeCommand::class,
+                Console\GenerateCommand::class,
             ]);
         }
     }
 
     /**
      * Load the cached routes for the application.
-     *
-     * @return void
      */
     protected function loadCachedRoutes(): void
     {
-        parent::loadCachedRoutes();
-
-        $this->app->booted(function () {
+        $this->app->booted(function (): void {
             /** @var \Dentro\Yalr\RouterFactory $routerFactory */
             $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
             $routerFactory->registerPreloads();
         });
+
+        parent::loadCachedRoutes();
     }
 
     /**
      * Load the application routes.
      *
-     * @return void
      * @throws \Illuminate\Contracts\Container\BindingResolutionException|\ReflectionException
      */
     protected function loadRoutes(): void

@@ -13,7 +13,7 @@ class BinderRoute implements Bindable
 
     public function bind(): void
     {
-        $this->router->bind('user', static function ($value) {
+        $this->router->bind('user', static function (string $value): string {
             return 'User: ' . $value;
         });
     }

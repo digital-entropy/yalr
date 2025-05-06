@@ -5,55 +5,27 @@ namespace Dentro\Yalr\Console;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Dentro\Yalr\Helpers\RouteTransformer;
 
-/**
- * Route Installer.
- *
- * @author      veelasky <veelasky@gmail.com>
- */
 class InstallCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'yalr:install {--remove : Remove default laravel routes installation}';
+    protected $signature = 'yalr:install
+                            {--transform : Transform existing route files to Yalr format}
+                            {--backup : Create backup of original route files}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Manage YALR in favor of original laravel router';
 
-    /**
-     * Laravel filesystem.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    private Filesystem $filesystem;
-
-    /**
-     * InstallCommand constructor.
-     *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
-     */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(
+        private Filesystem $filesystem
+    )
     {
         parent::__construct();
-
-        $this->filesystem = $filesystem;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle(): int
     {
-        $this->comment('Publishing YALR config file..');
+        $this->comment('Publishing YALR config file...');
 
         if ($this->runningInLumen()) {
             if ($this->filesystem->exists(base_path('config')) === false) {
@@ -65,70 +37,119 @@ class InstallCommand extends Command
             $this->callSilent('vendor:publish', ['--tag' => 'yalr-config']);
         }
 
-        if (
-            $this->option('remove')
-            && $this->confirm('WARNING: Are you sure you want to remove default laravel route file?')
-        ) {
-            $this->removeLaravelRoute();
+        if ($this->option('transform')) {
+            $this->transformRouteFiles();
         }
 
         return 0;
     }
 
     /**
-     * Determine if application is running on lumen.
-     *
-     * @return bool
+     * Transform traditional Laravel route files to Yalr format
      */
-    protected function runningInLumen(): bool
+    protected function transformRouteFiles(): void
     {
-        return Str::contains(app()->version(), 'Lumen');
+        $routesPath = base_path('routes');
+
+        if (!$this->filesystem->exists($routesPath)) {
+            $this->warn('Routes directory not found. Skipping transformation.');
+            return;
+        }
+
+        $this->info('Transforming route files...');
+
+        $routeFiles = (new Finder())
+            ->files()
+            ->name('*.php')
+            ->in($routesPath);
+
+        if (!count($routeFiles)) {
+            $this->warn('No route files found in routes directory.');
+            return;
+        }
+
+        $transformer = new RouteTransformer();
+        $routesTransformed = 0;
+
+        foreach ($routeFiles as $file) {
+            $filePath = $file->getRealPath();
+            $relativePath = Str::after($filePath, base_path() . DIRECTORY_SEPARATOR);
+
+            // Skip files that don't have Route::* declarations
+            $content = $this->filesystem->get($filePath);
+            if (!Str::contains($content, 'Route::')) {
+                $this->line("Skipping {$relativePath} - no Laravel routes found");
+                continue;
+            }
+
+            $this->line("Processing {$relativePath}...");
+
+            // Create backup if requested
+            if ($this->option('backup')) {
+                $backupPath = $filePath . '.bak';
+                $this->filesystem->copy($filePath, $backupPath);
+                $this->line("  Created backup at {$backupPath}");
+            }
+
+            // Transform the file
+            $className = $this->getRouteClassName($file->getFilenameWithoutExtension());
+            $namespace = $this->getNamespace($filePath);
+
+            $transformedContent = $transformer->transformRouteFile(
+                $content,
+                $className,
+                $namespace
+            );
+
+            if ($transformedContent) {
+                $transformedPath = $this->getTransformedPath($filePath, $className);
+                $this->filesystem->put($transformedPath, $transformedContent);
+                $this->info("  Created Yalr route file: {$transformedPath}");
+                $routesTransformed++;
+            } else {
+                $this->warn("  Failed to transform {$relativePath}");
+            }
+        }
+
+        $this->newLine();
+        $this->info("Transformation complete: {$routesTransformed} route files processed");
+        $this->comment('To register these routes, add them to your config/routes.php file in the appropriate section.');
     }
 
     /**
-     * Remove laravel default route.
-     *
-     * @return void
+     * Generate a class name for the route file
      */
-    protected function removeLaravelRoute(): void
+    protected function getRouteClassName(string $filename): string
     {
-        $this->filesystem->deleteDirectory(base_path('routes'));
-        $this->comment('`routes` directory has been deleted!');
+        return Str::studly($filename) . 'Route';
+    }
 
-        if ($this->filesystem->exists(base_path('app/Providers/RouteServiceProvider.php'))) {
-            $this->filesystem->delete(base_path('app/Providers/RouteServiceProvider.php'));
-            $this->comment('`app/Providers/RouteServiceProvider.php` file has been deleted!');
+    /**
+     * Determine the namespace based on file location
+     */
+    protected function getNamespace(string $filePath): string
+    {
+        // Default namespace for route classes
+        return 'App\\Http\\Routes';
+    }
+
+    /**
+     * Get path for transformed route file
+     */
+    protected function getTransformedPath(string $originalPath, string $className): string
+    {
+        $directory = app_path('Http/Routes');
+
+        // Create directory if it doesn't exist
+        if (!$this->filesystem->exists($directory)) {
+            $this->filesystem->makeDirectory($directory, 0755, true);
         }
 
-        // remove explicit `require` in `app/Console/Kernel.php`
-        $stream = preg_replace(
-            '/require base_path\(\'routes\/console\.php\'\);/m',
-            '// require base_path(\'routes/console.php\');',
-            file_get_contents(base_path('app/Console/Kernel.php'))
-        );
-        file_put_contents(base_path('app/Console/Kernel.php'), $stream);
-        $this->comment('`app/Console/Kernel.php` has been modified!');
+        return $directory . '/' . $className . '.php';
+    }
 
-        // remove RouteServiceProvider from config/app.php
-        if ($this->filesystem->exists(base_path('config/app.php'))) {
-            $stream = preg_replace(
-                '/App\\\Providers\\\RouteServiceProvider::class,/u',
-                '// App\\\Providers\\\RouteServiceProvider::class,',
-                file_get_contents(base_path('config/app.php'))
-            );
-            file_put_contents(base_path('config/app.php'), $stream);
-            $this->comment('`config/app.php` has been modified!');
-        }
-
-        // and once more in `app/Providers/BroadcastServiceProvider.php`
-        if ($this->filesystem->exists(base_path('app/Providers/BroadcastServiceProvider.php'))) {
-            $stream = preg_replace(
-                '/require base_path\(\'routes\/channels\.php\'\);/m',
-                '// require base_path(\'routes/channels.php\');',
-                file_get_contents(base_path('app/Providers/BroadcastServiceProvider.php'))
-            );
-            file_put_contents(base_path('app/Providers/BroadcastServiceProvider.php'), $stream);
-            $this->comment('`app/Providers/BroadcastServiceProvider.php` has been modified!');
-        }
+    protected function runningInLumen(): bool
+    {
+        return Str::contains(app()->version(), 'Lumen');
     }
 }

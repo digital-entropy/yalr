@@ -2,56 +2,24 @@
 
 namespace Dentro\Yalr\Console;
 
+use Dentro\Yalr\Helpers\YalrConfig;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * Make Command.
- *
- * @author      veelasky <veelasky@gmail.com>
- */
 class MakeCommand extends GeneratorCommand
 {
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
     protected $name = 'make:route';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Create a new YALR';
 
-    /**
-     * The type of class being generated.
-     *
-     * @var string
-     */
     protected $type = 'Route';
 
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param $rootNameSpace
-     *
-     * @return string
-     */
-    public function getDefaultNamespace($rootNameSpace): string
+    public function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNameSpace.'\Http\Routes';
+        return $rootNamespace.'\Http\Routes';
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     public function handle(): int
     {
         parent::handle();
@@ -59,29 +27,13 @@ class MakeCommand extends GeneratorCommand
         return 0;
     }
 
-    /**
-     * Get the stub file for the generator.
-     *
-     * @return string
-     */
     protected function getStub(): string
     {
-        if ($this->option('controller')) {
-            $stub = '/../../stubs/route.controller.stub';
-        } else {
-            $stub = '/../../stubs/route.stub';
-        }
+        $stub = $this->option('controller') ? '/../../stubs/route.controller.stub' : '/../../stubs/route.stub';
 
         return __DIR__.$stub;
     }
 
-    /**
-     * Build the class with the given name.
-     *
-     * @param  string $name
-     * @return string
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     protected function buildClass($name): string
     {
         if ($this->option('inject') !== null) {
@@ -107,11 +59,6 @@ class MakeCommand extends GeneratorCommand
         return parent::buildClass($name);
     }
 
-    /**
-     * Generate new controller class.
-     *
-     * @return void
-     */
     protected function buildController(): void
     {
         $this->call('make:controller', [
@@ -119,51 +66,22 @@ class MakeCommand extends GeneratorCommand
         ]);
     }
 
-    /**
-     * Get Controller class name without namespace.
-     *
-     * @return string
-     */
     protected function getControllerClassname(): string
     {
         return str_replace(array($this->getNamespace($this->getNameInput()) . '\\', $this->type), array('', 'Controller'), $this->getNameInput());
     }
 
-    /**
-     * Inject Route to `routes.php`.
-     *
-     * @param $name
-     */
     protected function injectRouteClass($name): void
     {
-        /** @var $filesystem Filesystem */
-        $filesystem = app(Filesystem::class);
-        $path = config_path('routes.php');
         $route_group = $this->option('inject');
 
-        if (
-            $filesystem->exists($path) &&
-            preg_match('/\/\*\* \@inject '.$route_group.' \*\*\//', file_get_contents($path))
-        ) {
-            $stream = preg_replace(
-                '/\/\*\* \@inject '.$route_group.' \*\*\//',
-                "{$name}::class,"."\n".'        /** @inject '.$route_group.' **/',
-                file_get_contents($path)
-            );
-
-            file_put_contents($path, $stream);
-
+        if (YalrConfig::add($route_group, "{$name}::class")) {
             $this->info("`{$name}` injected to `routes.php` in `{$route_group}` group.");
         } else {
             $this->error("Failed injecting route: file `routes.php` not found or group `{$route_group}` undefined");
         }
     }
 
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
     protected function getOptions(): array
     {
         return [
