@@ -15,11 +15,13 @@ class MakeCommand extends GeneratorCommand
 
     protected $type = 'Route';
 
+    #[\Override]
     public function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace.'\Http\Routes';
     }
 
+    #[\Override]
     public function handle(): int
     {
         parent::handle();
@@ -34,6 +36,7 @@ class MakeCommand extends GeneratorCommand
         return __DIR__.$stub;
     }
 
+    #[\Override]
     protected function buildClass($name): string
     {
         if ($this->option('inject') !== null) {
@@ -68,7 +71,7 @@ class MakeCommand extends GeneratorCommand
 
     protected function getControllerClassname(): string
     {
-        return str_replace(array($this->getNamespace($this->getNameInput()) . '\\', $this->type), array('', 'Controller'), $this->getNameInput());
+        return str_replace([$this->getNamespace($this->getNameInput()) . '\\', $this->type], ['', 'Controller'], $this->getNameInput());
     }
 
     protected function injectRouteClass($name): void

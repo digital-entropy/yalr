@@ -31,7 +31,7 @@ class RouteTransformer
         }
         // Remove the extracted use statements from the body content to avoid duplication
         $modifiedContent = preg_replace('/^use\s+[^;]+;/m', '', $modifiedContent);
-        $modifiedContent = ltrim($modifiedContent); // Remove leading whitespace/newlines
+        $modifiedContent = ltrim((string) $modifiedContent); // Remove leading whitespace/newlines
 
         // Generate Yalr route class file
         return $this->generateRouteClass($modifiedContent, $className, $namespace, $prefix, $useStatements);
@@ -56,13 +56,13 @@ PHP;
 
         // Add a newline after use statements if they exist
         $useStatementsBlock = '';
-        if (!empty($useStatements)) {
+        if ($useStatements !== '' && $useStatements !== '0') {
             $useStatementsBlock = $useStatements . "\n";
         }
 
         // Indent the register method body
         $indentedBody = collect(explode("\n", trim($registerMethodBody)))
-            ->map(fn ($line) => rtrim('        ' . $line)) // Add 8 spaces for indentation, trim trailing whitespace
+            ->map(fn ($line): string => rtrim('        ' . $line)) // Add 8 spaces for indentation, trim trailing whitespace
             ->implode("\n");
 
         // Ensure the template has correct base indentation

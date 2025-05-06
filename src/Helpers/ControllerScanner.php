@@ -44,9 +44,6 @@ class ControllerScanner
 
     /**
      * Convert a directory path to a namespace
-     *
-     * @param string $path
-     * @return string
      */
     protected function getNamespaceFromPath(string $path): string
     {

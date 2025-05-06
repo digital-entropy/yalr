@@ -23,7 +23,6 @@ trait RouteController
      * Use controller method.
      *
      * @param $method string
-     * @param string|null $controller
      */
     public function uses(string $method, string|null $controller = null): string
     {

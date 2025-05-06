@@ -113,8 +113,6 @@ abstract class BaseRoute implements Bindable, Registerable
 
     /**
      * Get route name.
-     *
-     * @param string|null $suffix
      */
     public function name(string|null $suffix = null): string
     {

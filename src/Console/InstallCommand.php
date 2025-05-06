@@ -17,7 +17,7 @@ class InstallCommand extends Command
     protected $description = 'Manage YALR in favor of original laravel router';
 
     public function __construct(
-        private Filesystem $filesystem
+        private readonly Filesystem $filesystem
     )
     {
         parent::__construct();
@@ -63,7 +63,7 @@ class InstallCommand extends Command
             ->name('*.php')
             ->in($routesPath);
 
-        if (!count($routeFiles)) {
+        if (count($routeFiles) === 0) {
             $this->warn('No route files found in routes directory.');
             return;
         }

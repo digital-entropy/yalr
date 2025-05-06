@@ -11,7 +11,6 @@ use Orchestra\Testbench\TestCase;
 class AutoInjectTest extends TestCase
 {
     private $tempConfigFile;
-    private string $basePath;
 
     /**
      * Get package providers.
@@ -26,6 +25,7 @@ class AutoInjectTest extends TestCase
         ];
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -78,11 +78,9 @@ PHP;
             'app/Controllers/Api/ApiController.php',
             '<?php namespace App\Controllers\Api; class ApiController {}'
         );
-
-        // Set the base path for testing
-        $this->basePath = Storage::path('');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         // Reset the config path
