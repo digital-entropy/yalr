@@ -78,10 +78,11 @@ class MakeCommand extends GeneratorCommand
     {
         $route_group = $this->option('inject');
 
-        if (YalrConfig::add($route_group, "{$name}::class")) {
-            $this->info("`{$name}` injected to `routes.php` in `{$route_group}` group.");
-        } else {
-            $this->error("Failed injecting route: file `routes.php` not found or group `{$route_group}` undefined");
+        try {
+            YalrConfig::add($route_group, "$name::class");
+            $this->info("`$name` injected to `routes.php` in `{$route_group}` group.");
+        } catch (\Exception) {
+            $this->error("Failed injecting route: file `routes.php` not found or group `$route_group` undefined");
         }
     }
 

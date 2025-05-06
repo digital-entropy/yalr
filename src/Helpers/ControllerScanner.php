@@ -4,7 +4,6 @@ namespace Dentro\Yalr\Helpers;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use RuntimeException;
 use Symfony\Component\Finder\Finder;
 
 class ControllerScanner

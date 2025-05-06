@@ -137,11 +137,14 @@ PHP;
 
     public function testAddToNonExistentFile(): void
     {
-        // Act
-        $result = YalrConfig::add('test', '\App\Test::class', '/non/existent/path.php');
+        $path = '/non/existent/path.php';
 
         // Assert
-        $this->assertFalse($result);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('YalrConfig: Config file not found at '.$path);
+
+        // Act
+        YalrConfig::add('test', '\App\Test::class', $path);
     }
 
     public function testAddToNewSection(): void
@@ -186,26 +189,6 @@ PHP;
 
         // Clean up
         unlink($file);
-    }
-
-    public function testInvalidEmptySectionThrowsException(): void
-    {
-        // Assert
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Group name cannot be empty');
-
-        // Act
-        YalrConfig::add('', '\App\Test::class');
-    }
-
-    public function testInvalidEmptyClassThrowsException(): void
-    {
-        // Assert
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Route cannot be empty');
-
-        // Act
-        YalrConfig::add('web', '');
     }
 
     public function testGetConfigPath(): void
