@@ -22,33 +22,24 @@ class YalrConfig
 {
     /**
      * Custom config path for testing purposes
-     *
-     * @var string|null
      */
     protected static ?string $configPath = null;
 
     /**
      * Default config file name
-     *
-     * @var string
      */
     protected static string $configFileName = 'routes.php';
 
     /**
      * Add Route to config/routes.php
-     *
-     * @param string $group
-     * @param string $route
-     * @param string|null $customConfigPath
-     * @return bool
      */
     public static function add(string $group, string $route, ?string $customConfigPath = null): bool
     {
-        if (empty($group)) {
+        if ($group === '' || $group === '0') {
             throw new InvalidArgumentException('Group name cannot be empty');
         }
 
-        if (empty($route)) {
+        if ($route === '' || $route === '0') {
             throw new InvalidArgumentException('Route cannot be empty');
         }
 
@@ -60,87 +51,81 @@ class YalrConfig
 
         // Visitor to add a route to an existing group
         $addRouteVisitor = new class($group, $route) extends NodeVisitorAbstract {
-            private string $targetGroup;
-            private string $routeToAdd;
             private bool $groupFound = false;
             private bool $routeAdded = false;
 
-            public function __construct(string $group, string $route)
+            public function __construct(private readonly string $targetGroup, private readonly string $routeToAdd)
             {
-                $this->targetGroup = $group;
-                $this->routeToAdd = $route;
             }
 
             public function leaveNode(Node $node): null
             {
-                if ($node instanceof Node\Stmt\Return_) {
-                    if ($node->expr instanceof Array_) {
-                        foreach ($node->expr->items as $item) {
-                            if ($item instanceof ArrayItem &&
-                                $item->key instanceof String_ &&
-                                $item->key->value === $this->targetGroup) {
+                if ($node instanceof Node\Stmt\Return_ && $node->expr instanceof Array_) {
+                    foreach ($node->expr->items as $item) {
+                        if ($item instanceof ArrayItem &&
+                            $item->key instanceof String_ &&
+                            $item->key->value === $this->targetGroup) {
 
-                                $this->groupFound = true;
+                            $this->groupFound = true;
 
-                                if (!$item->value instanceof Array_) {
-                                    // If the group value is not an array, we cannot add to it.
-                                    // This might indicate a malformed config.
-                                    continue;
-                                }
-
-                                // Check if route already exists
-                                $routeExists = false;
-                                foreach ($item->value->items as $routeItem) {
-                                    $currentRouteValue = null;
-                                    if ($routeItem->value instanceof ClassConstFetch) {
-                                        // Handle ClassName::class format
-                                        if ($routeItem->value->class instanceof Name) {
-                                            $currentRouteValue = $routeItem->value->class->toString() . '::class';
-                                        }
-                                    } elseif ($routeItem->value instanceof String_) {
-                                        // Handle string format
-                                        $currentRouteValue = $routeItem->value->value;
-                                    }
-
-                                    if ($currentRouteValue === $this->routeToAdd) {
-                                        $routeExists = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!$routeExists) {
-                                    // Parse the route string to add it properly
-                                    if (str_ends_with($this->routeToAdd, '::class')) {
-                                        // This is a class reference
-                                        $className = substr($this->routeToAdd, 0, -7);
-                                        $newRouteNode = new ClassConstFetch(
-                                            new Name($className),
-                                            'class'
-                                        );
-                                    } else {
-                                        // This is a string
-                                        $newRouteNode = new String_($this->routeToAdd);
-                                    }
-                                    $newRoute = new ArrayItem($newRouteNode);
-
-                                    $isDuplicate = collect($item->value->items)->contains(function ($value) use ($newRoute) {
-                                        if ($value->value instanceof ClassConstFetch && $newRoute->value instanceof ClassConstFetch) {
-                                            return ltrim($value->value->class->toString(), '\\') === ltrim($newRoute->value->class->toString(), '\\');
-                                        }
-                                        if ($value->value instanceof String_ && $newRoute->value instanceof String_) {
-                                            return ltrim($value->value->value, '\\') === ltrim($newRoute->value->value, '\\');
-                                        }
-                                        return false;
-                                    });
-
-                                    if (! $isDuplicate) {
-                                        $item->value->items[] = $newRoute;
-                                        $this->routeAdded = true;
-                                    }
-                                }
-                                // Stop searching once the target group is found and processed
-                                break;
+                            if (!$item->value instanceof Array_) {
+                                // If the group value is not an array, we cannot add to it.
+                                // This might indicate a malformed config.
+                                continue;
                             }
+
+                            // Check if route already exists
+                            $routeExists = false;
+                            foreach ($item->value->items as $routeItem) {
+                                $currentRouteValue = null;
+                                if ($routeItem->value instanceof ClassConstFetch) {
+                                    // Handle ClassName::class format
+                                    if ($routeItem->value->class instanceof Name) {
+                                        $currentRouteValue = $routeItem->value->class->toString() . '::class';
+                                    }
+                                } elseif ($routeItem->value instanceof String_) {
+                                    // Handle string format
+                                    $currentRouteValue = $routeItem->value->value;
+                                }
+
+                                if ($currentRouteValue === $this->routeToAdd) {
+                                    $routeExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!$routeExists) {
+                                // Parse the route string to add it properly
+                                if (str_ends_with($this->routeToAdd, '::class')) {
+                                    // This is a class reference
+                                    $className = substr($this->routeToAdd, 0, -7);
+                                    $newRouteNode = new ClassConstFetch(
+                                        new Name($className),
+                                        'class'
+                                    );
+                                } else {
+                                    // This is a string
+                                    $newRouteNode = new String_($this->routeToAdd);
+                                }
+                                $newRoute = new ArrayItem($newRouteNode);
+
+                                $isDuplicate = collect($item->value->items)->contains(function ($value) use ($newRoute): bool {
+                                    if ($value->value instanceof ClassConstFetch && $newRoute->value instanceof ClassConstFetch) {
+                                        return ltrim($value->value->class->toString(), '\\') === ltrim($newRoute->value->class->toString(), '\\');
+                                    }
+                                    if ($value->value instanceof String_ && $newRoute->value instanceof String_) {
+                                        return ltrim($value->value->value, '\\') === ltrim($newRoute->value->value, '\\');
+                                    }
+                                    return false;
+                                });
+
+                                if (! $isDuplicate) {
+                                    $item->value->items[] = $newRoute;
+                                    $this->routeAdded = true;
+                                }
+                            }
+                            // Stop searching once the target group is found and processed
+                            break;
                         }
                     }
                 }
@@ -166,49 +151,39 @@ class YalrConfig
         if (!$addRouteVisitor->hasGroupFound()) {
             // Group isn't found, create it and add the route
             $addGroupVisitor = new class($group, $route) extends NodeVisitorAbstract {
-                private string $targetGroup;
-                private string $routeToAdd;
                 private bool $groupAdded = false;
 
-                public function __construct(string $group, string $route)
+                public function __construct(private readonly string $targetGroup, private readonly string $routeToAdd)
                 {
-                    $this->targetGroup = $group;
-                    $this->routeToAdd = $route;
                 }
 
                 public function leaveNode(Node $node): ?Node\Stmt\Return_
                 {
-                    if ($node instanceof Node\Stmt\Return_) {
-                        if ($node->expr instanceof Array_) {
-                            // Create the value node for the route
-                            $routeValueNode = str_ends_with($this->routeToAdd, '::class')
-                                ? new ClassConstFetch(
-                                    new Name(substr($this->routeToAdd, 0, -7)),
-                                    'class'
-                                )
-                                : new String_($this->routeToAdd);
-
-                            // Create the array item for the route within the new group
-                            $routeArrayItem = new ArrayItem($routeValueNode);
-
-                            // Create the array for the new group
-                            $groupArray = new Array_([$routeArrayItem]);
-                            // Set attributes to match formatting if possible (optional)
-                            $groupArray->setAttribute('kind', Array_::KIND_SHORT); // Use [] syntax
-
-                            // Create the array item for the new group itself
-                            $newGroupItem = new ArrayItem(
-                                $groupArray,
-                                new String_($this->targetGroup) // Group name as key
-                            );
-
-                            // Add the new group item to the main return array
-                            $node->expr->items[] = $newGroupItem;
-                            $this->groupAdded = true;
-
-                            // No need to traverse further down from here for this visitor's purpose
-                            return $node;
-                        }
+                    if ($node instanceof Node\Stmt\Return_ && $node->expr instanceof Array_) {
+                        // Create the value node for the route
+                        $routeValueNode = str_ends_with($this->routeToAdd, '::class')
+                            ? new ClassConstFetch(
+                                new Name(substr($this->routeToAdd, 0, -7)),
+                                'class'
+                            )
+                            : new String_($this->routeToAdd);
+                        // Create the array item for the route within the new group
+                        $routeArrayItem = new ArrayItem($routeValueNode);
+                        // Create the array for the new group
+                        $groupArray = new Array_([$routeArrayItem]);
+                        // Set attributes to match formatting if possible (optional)
+                        $groupArray->setAttribute('kind', Array_::KIND_SHORT);
+                        // Use [] syntax
+                        // Create the array item for the new group itself
+                        $newGroupItem = new ArrayItem(
+                            $groupArray,
+                            new String_($this->targetGroup) // Group name as key
+                        );
+                        // Add the new group item to the main return array
+                        $node->expr->items[] = $newGroupItem;
+                        $this->groupAdded = true;
+                        // No need to traverse further down from here for this visitor's purpose
+                        return $node;
                     }
                     return null; // Important for visitors
                 }
@@ -248,19 +223,15 @@ class YalrConfig
     /**
      * Remove a route from config/routes.php
      *
-     * @param string $group
-     * @param string $route
-     * @param string|null $customConfigPath
-     * @return bool
      * @throws InvalidArgumentException
      */
     public static function remove(string $group, string $route, ?string $customConfigPath = null): bool
     {
-        if (empty($group)) {
+        if ($group === '' || $group === '0') {
             throw new InvalidArgumentException('Group name cannot be empty');
         }
 
-        if (empty($route)) {
+        if ($route === '' || $route === '0') {
             throw new InvalidArgumentException('Route cannot be empty');
         }
 
@@ -272,66 +243,60 @@ class YalrConfig
 
         try {
             $removeVisitor = new class($group, $route) extends NodeVisitorAbstract {
-                private string $targetGroup;
-                private string $routeToRemove;
                 private bool $groupFound = false;
                 private bool $routeRemoved = false;
 
-                public function __construct(string $group, string $route)
+                public function __construct(private readonly string $targetGroup, private readonly string $routeToRemove)
                 {
-                    $this->targetGroup = $group;
-                    $this->routeToRemove = $route;
                 }
 
                 public function leaveNode(Node $node): ?Node
                 {
-                    if ($node instanceof Node\Stmt\Return_) {
-                        if ($node->expr instanceof Array_) {
-                            foreach ($node->expr->items as $itemIndex => $item) {
-                                if ($item instanceof ArrayItem &&
-                                    $item->key instanceof String_ &&
-                                    $item->key->value === $this->targetGroup) {
+                    if ($node instanceof Node\Stmt\Return_ && $node->expr instanceof Array_) {
+                        foreach ($node->expr->items as $item) {
+                            if ($item instanceof ArrayItem &&
+                                $item->key instanceof String_ &&
+                                $item->key->value === $this->targetGroup) {
 
-                                    $this->groupFound = true;
+                                $this->groupFound = true;
 
-                                    if (!$item->value instanceof Array_) {
-                                        continue; // Cannot remove from non-array group value
-                                    }
-
-                                    // Find and remove route
-                                    $originalItems = $item->value->items;
-                                    $newItems = [];
-                                    $removed = false;
-                                    foreach ($originalItems as $routeItem) {
-                                        $currentRouteValue = null;
-                                        if ($routeItem->value instanceof ClassConstFetch) {
-                                            if ($routeItem->value->class instanceof Name) {
-                                                $currentRouteValue = $routeItem->value->class->toString() . '::class';
-                                            }
-                                        } elseif ($routeItem->value instanceof String_) {
-                                            $currentRouteValue = $routeItem->value->value;
-                                        }
-
-                                        if ($currentRouteValue === $this->routeToRemove) {
-                                            // Don't add this item to the new list
-                                            $removed = true;
-                                            $this->routeRemoved = true;
-                                        } else {
-                                            $newItems[] = $routeItem; // Keep this item
-                                        }
-                                    }
-
-                                    // If an item was removed, update the items list for the group
-                                    if ($removed) {
-                                        $item->value->items = $newItems;
-                                    }
-                                    // Stop searching once the target group is found and processed
-                                    break;
+                                if (!$item->value instanceof Array_) {
+                                    continue; // Cannot remove from non-array group value
                                 }
+
+                                // Find and remove route
+                                $originalItems = $item->value->items;
+                                $newItems = [];
+                                $removed = false;
+                                foreach ($originalItems as $routeItem) {
+                                    $currentRouteValue = null;
+                                    if ($routeItem->value instanceof ClassConstFetch) {
+                                        if ($routeItem->value->class instanceof Name) {
+                                            $currentRouteValue = $routeItem->value->class->toString() . '::class';
+                                        }
+                                    } elseif ($routeItem->value instanceof String_) {
+                                        $currentRouteValue = $routeItem->value->value;
+                                    }
+
+                                    if ($currentRouteValue === $this->routeToRemove) {
+                                        // Don't add this item to the new list
+                                        $removed = true;
+                                        $this->routeRemoved = true;
+                                    } else {
+                                        $newItems[] = $routeItem; // Keep this item
+                                    }
+                                }
+
+                                // If an item was removed, update the items list for the group
+                                if ($removed) {
+                                    $item->value->items = $newItems;
+                                }
+                                // Stop searching once the target group is found and processed
+                                break;
                             }
-                            // Return the potentially modified node
-                            return $node;
                         }
+                        // Return the potentially modified node
+                        return $node;
                     }
                     // Returning null means "keep node as is" unless modification happened above
                     return null;
@@ -366,7 +331,7 @@ class YalrConfig
             // Write the modified AST back to the file
             return self::writeAstToFile($modifiedAst, $config_file);
 
-        } catch (Error $error) {
+        } catch (Error) {
             // Log error
             return false;
         }
@@ -376,14 +341,11 @@ class YalrConfig
     /**
      * Get routes in a specific group
      *
-     * @param string $group
-     * @param string|null $customConfigPath
-     * @return array
      * @throws InvalidArgumentException
      */
     public static function getRoutes(string $group, ?string $customConfigPath = null): array
     {
-        if (empty($group)) {
+        if ($group === '' || $group === '0') {
             throw new InvalidArgumentException('Group name cannot be empty');
         }
 
@@ -396,40 +358,36 @@ class YalrConfig
         $routes = [];
         try {
             $getRoutesVisitor = new class($group, $routes) extends NodeVisitorAbstract {
-                private string $targetGroup;
                 private array $routes;
 
-                public function __construct(string $group, array &$routes)
+                public function __construct(private readonly string $targetGroup, array &$routes)
                 {
-                    $this->targetGroup = $group;
                     $this->routes = &$routes;
                 }
 
                 // Use enterNode for early exit once group is found and processed
                 public function enterNode(Node $node)
                 {
-                    if ($node instanceof Node\Stmt\Return_) {
-                        if ($node->expr instanceof Array_) {
-                            foreach ($node->expr->items as $item) {
-                                if ($item instanceof ArrayItem &&
-                                    $item->key instanceof String_ &&
-                                    $item->key->value === $this->targetGroup) {
+                    if ($node instanceof Node\Stmt\Return_ && $node->expr instanceof Array_) {
+                        foreach ($node->expr->items as $item) {
+                            if ($item instanceof ArrayItem &&
+                                $item->key instanceof String_ &&
+                                $item->key->value === $this->targetGroup) {
 
-                                    if ($item->value instanceof Array_) {
-                                        // Extract routes from the group's array
-                                        foreach ($item->value->items as $routeItem) {
-                                            if ($routeItem->value instanceof ClassConstFetch) {
-                                                if ($routeItem->value->class instanceof Name) {
-                                                    $this->routes[] = $routeItem->value->class->toString() . '::class';
-                                                }
-                                            } elseif ($routeItem->value instanceof String_) {
-                                                $this->routes[] = $routeItem->value->value;
+                                if ($item->value instanceof Array_) {
+                                    // Extract routes from the group's array
+                                    foreach ($item->value->items as $routeItem) {
+                                        if ($routeItem->value instanceof ClassConstFetch) {
+                                            if ($routeItem->value->class instanceof Name) {
+                                                $this->routes[] = $routeItem->value->class->toString() . '::class';
                                             }
+                                        } elseif ($routeItem->value instanceof String_) {
+                                            $this->routes[] = $routeItem->value->value;
                                         }
                                     }
-                                    // Group found and processed, no need to traverse further within this branch
-                                    return NodeVisitor::STOP_TRAVERSAL;
                                 }
+                                // Group found and processed, no need to traverse further within this branch
+                                return NodeVisitor::STOP_TRAVERSAL;
                             }
                         }
                     }
@@ -443,7 +401,7 @@ class YalrConfig
 
             return $routes;
 
-        } catch (Error $error) {
+        } catch (Error) {
             // Log error
             return [];
         }
@@ -452,9 +410,6 @@ class YalrConfig
 
     /**
      * Get all available groups in the config
-     *
-     * @param string|null $customConfigPath
-     * @return array
      */
     public static function getGroups(?string $customConfigPath = null): array
     {
@@ -477,17 +432,15 @@ class YalrConfig
                 // enterNode is suitable here as we only need the top-level keys
                 public function enterNode(Node $node)
                 {
-                    if ($node instanceof Node\Stmt\Return_) {
-                        if ($node->expr instanceof Array_) {
-                            foreach ($node->expr->items as $item) {
-                                // Ensure it's an item with a string key (representing a group)
-                                if ($item instanceof ArrayItem && $item->key instanceof String_) {
-                                    $this->groups[] = $item->key->value;
-                                }
+                    if ($node instanceof Node\Stmt\Return_ && $node->expr instanceof Array_) {
+                        foreach ($node->expr->items as $item) {
+                            // Ensure it's an item with a string key (representing a group)
+                            if ($item instanceof ArrayItem && $item->key instanceof String_) {
+                                $this->groups[] = $item->key->value;
                             }
-                            // Found the main return array, no need to go deeper for group names
-                            return NodeTraverser::DONT_TRAVERSE_CHILDREN;
                         }
+                        // Found the main return array, no need to go deeper for group names
+                        return NodeTraverser::DONT_TRAVERSE_CHILDREN;
                     }
                     return null; // Continue traversal if not the target node
                 }
@@ -503,7 +456,7 @@ class YalrConfig
             return $groups;
 
 
-        } catch (Error $error) {
+        } catch (Error) {
             // Log error
             return [];
         }
@@ -511,8 +464,6 @@ class YalrConfig
 
     /**
      * Gets config path with respect to test overrides
-     *
-     * @return string
      */
     public static function getConfigPath(): string
     {
@@ -521,9 +472,6 @@ class YalrConfig
 
     /**
      * Set custom config path (useful for testing)
-     *
-     * @param string $path
-     * @return void
      */
     public static function setConfigPath(string $path): void
     {
@@ -532,8 +480,6 @@ class YalrConfig
 
     /**
      * Reset config path to default
-     *
-     * @return void
      */
     public static function resetConfigPath(): void
     {
@@ -544,7 +490,6 @@ class YalrConfig
     /**
      * Helper to get config file path, content, and parsed AST.
      *
-     * @param string|null $customConfigPath
      * @return array{?array, ?string, ?Parser} Returns [AST, config_file_path, parser] or [null, null, null] on failure.
      */
     private static function getConfigFileAndAst(?string $customConfigPath = null): array
@@ -574,7 +519,7 @@ class YalrConfig
             }
 
             return [$ast, $config_file, $parser];
-        } catch (Error $error) {
+        } catch (Error) {
             // Optionally log: error_log("YalrConfig: Parser error in {$config_file}: " . $error->getMessage());
             return [null, null, null];
         }
@@ -599,7 +544,7 @@ class YalrConfig
             }
 
             return (bool)file_put_contents($filePath, $newContent);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // Log exception
             // error_log("YalrConfig: Failed to write modified AST to {$filePath}: " . $e->getMessage());
             return false;

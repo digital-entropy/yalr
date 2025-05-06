@@ -25,7 +25,7 @@ class GenerateCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('Scanning routes configuration for controller directories...');
 
@@ -57,12 +57,12 @@ class GenerateCommand extends Command
                 $this->info("Scanning directory for '{$routeGroup}' group: {$directory}");
 
                 // Ensure directory has trailing slash
-                $directory = rtrim($directory, '/') . '/';
+                $directory = rtrim((string) $directory, '/') . '/';
 
                 // Scan the directory for controller classes
                 $controllers = $scanner->scan($directory);
 
-                if (empty($controllers)) {
+                if ($controllers === []) {
                     $this->warn("No controller classes found in {$directory}");
                     continue;
                 }
@@ -91,8 +91,6 @@ class GenerateCommand extends Command
 
     /**
      * Get the controller scanner instance.
-     *
-     * @return \Dentro\Yalr\Helpers\ControllerScanner
      */
     protected function getControllerScanner(): ControllerScanner
     {
@@ -101,8 +99,6 @@ class GenerateCommand extends Command
 
     /**
      * Get the configuration path.
-     *
-     * @return string
      */
     protected function getConfigPath(): string
     {
@@ -111,10 +107,6 @@ class GenerateCommand extends Command
 
     /**
      * Add a controller to the configuration.
-     *
-     * @param string $key
-     * @param string $controller
-     * @return bool
      */
     protected function addToConfig(string $key, string $controller): bool
     {

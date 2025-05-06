@@ -15,6 +15,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
     /**
      * Bootstrap any package services.
      */
+    #[\Override]
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
@@ -27,6 +28,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
     /**
      * Register bindings in the container.
      */
+    #[\Override]
     public function register(): void
     {
         parent::register();
@@ -35,12 +37,10 @@ class YalrServiceProvider extends BaseRouteServiceProvider
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton(RouterFactory::SERVICE_NAME, static function (): \Dentro\Yalr\RouterFactory {
-            return new RouterFactory(static fn (): array => [
-                Container::getInstance()['config'],
-                Container::getInstance()['router'],
-            ]);
-        });
+        $this->app->singleton(RouterFactory::SERVICE_NAME, static fn(): \Dentro\Yalr\RouterFactory => new RouterFactory(static fn (): array => [
+            Container::getInstance()['config'],
+            Container::getInstance()['router'],
+        ]));
 
         $this->app->alias(RouterFactory::SERVICE_NAME, RouterFactory::class);
 
@@ -57,6 +57,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
     /**
      * Load the cached routes for the application.
      */
+    #[\Override]
     protected function loadCachedRoutes(): void
     {
         $this->app->booted(function (): void {
@@ -73,6 +74,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException|\ReflectionException
      */
+    #[\Override]
     protected function loadRoutes(): void
     {
         /** @var \Dentro\Yalr\RouterFactory $routerFactory */

@@ -12,6 +12,7 @@ class MakeCommandTest extends TestCase
 {
     private $tempConfigFile;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,6 +42,7 @@ PHP;
         YalrConfig::setConfigPath($this->tempConfigFile);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         // Clean up the temporary file

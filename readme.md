@@ -45,13 +45,14 @@ composer require dentro/yalr
 
 ### Requirements
 
-| Laravel | Yalr |
-| ------- | ---- |
-| 8.x     | ^1.0 |
-| 9.x     | ^1.1 |
-| 10.x    | ^1.2 |
-| 11.x    | ^1.3 |
-| 12.x    | ^1.4 |
+| Laravel | Yalr | PHP  |
+|---------|------|------|
+| 8.x     | ^1.0 | ^8.0 |
+| 9.x     | ^1.1 | ^8.0 |
+| 10.x    | ^1.2 | ^8.0 |
+| 11.x    | ^1.3 | ^8.1 |
+| 12.x    | ^1.4 | ^8.2 |
+| 12.x    | ^1.5 | ^8.3 |
 
 ### Applying into your project
 

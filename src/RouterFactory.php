@@ -50,9 +50,6 @@ class RouterFactory
      * Create a new route group.
      *
      * @param       $groupName
-     * @param array $options
-     * @param array $items
-     * @return RouterFactory
      */
     public function make($groupName, array $options = [], array $items = []): self
     {
@@ -158,7 +155,6 @@ class RouterFactory
      * Get options for a specific route group.
      *
      * @param $key
-     * @return mixed
      */
     public function getOptions($key): mixed
     {
@@ -169,7 +165,6 @@ class RouterFactory
      * Get Route Group container by its key.
      *
      * @param $key
-     * @return Collection
      */
     public function get($key): Collection
     {

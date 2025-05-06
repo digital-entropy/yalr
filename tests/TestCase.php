@@ -19,6 +19,7 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    #[\Override]
     protected function setUp(): void
     {
         // Use a static method for mocking instead of deprecated "fake" method
@@ -36,9 +37,7 @@ class TestCase extends Orchestra
         if (method_exists(RouterFactory::class, 'fake')) {
             RouterFactory::fake();
         } elseif (method_exists(RouterFactory::class, 'shouldReceive')) {
-            RouterFactory::shouldReceive('create')->andReturnUsing(function(): \Dentro\Yalr\RouterFactory {
-                return new RouterFactory();
-            });
+            RouterFactory::shouldReceive('create')->andReturnUsing(fn(): \Dentro\Yalr\RouterFactory => new RouterFactory());
         }
     }
 
@@ -87,7 +86,7 @@ class TestCase extends Orchestra
                 }
 
                 if (! $route->getAction('uses') instanceof Closure) {
-                    if (\get_class($route->getController()) !== $controller) {
+                    if ($route->getController()::class !== $controller) {
                         return false;
                     }
 
@@ -149,11 +148,11 @@ class TestCase extends Orchestra
             $files->exists(base_path('bootstrap/cache/routes-v7.php'))
         );
 
-        if (isset($this->app)) {
+        if ($this->app !== null) {
             $this->reloadApplication();
         }
 
-        $this->beforeApplicationDestroyed(static function () use ($files) {
+        $this->beforeApplicationDestroyed(static function () use ($files): void {
             $files->delete(
                 base_path('bootstrap/cache/routes-v7.php'),
                 ...$files->glob(base_path('routes/testbench-*.php'))
@@ -170,9 +169,6 @@ class TestCase extends Orchestra
 
     /**
      * Filter out routes with closure actions to prevent serialization issues during route caching
-     *
-     * @param CompiledRouteCollection|RouteCollection $routes
-     * @return RouteCollection
      */
     protected function sanitizeClosure(CompiledRouteCollection|RouteCollection $routes): RouteCollection
     {
