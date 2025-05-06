@@ -18,7 +18,7 @@ jobs:
       - name: Run Test
         run: composer test
       - name: Upload to CodeCov.io
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CDCV_KEY }}
           file: ./build/clover.xml
