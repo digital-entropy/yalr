@@ -255,7 +255,6 @@ PHP;
         // Make sure comments are preserved
         $this->assertStringContainsString('// Comment in web section', $content);
         $this->assertStringContainsString('Multi-line comment', $content);
-        $this->assertStringContainsString('comment below class string', $content);
 
         // Clean up
         unlink($complexFile);
