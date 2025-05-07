@@ -8,42 +8,41 @@
 
 Define Laravel routes in different ways using [Class Wrapper Route](#class-wrapper-route) or [Route Attribute](#route-attribute)
 
-Previously known as [jalameta/router](https://github.com/jalameta/jps-router).<br><br>
+Previously known as [jalameta/router](https://github.com/jalameta/jps-router).
 
-### TABLE OF CONTENT
+## Table of Contents
 
--   [Installation](#installation)
--   [Requirements](#requirements)
--   [Applying into your project](#applying-into-your-project)
--   [Usage](#usage)
-    -   [Class Wrapper Route](#class-wrapper-route)
-        -   [Creating New Route](#creating-new-route)
-        -   [Route Configuration](#routes-configuration)
-        -   [Class Structure](#class-structure)
-        -   [Using Controller](#using-controller)
-        -   [Route Prefix](#route-prefix)
-        -   [Route Name](#route-name)
-    -   [Preloads](#preloads)
-    -   [Route Attribute](#route-attribute)
-        -   [Available Class Target](#available-class-target)
-        -   [Available Method Target](#available-method-target)
-        -   [Detailed Attribute Examples](#detailed-attribute-examples)
-    -   [Auto Controller Injection](#auto-controller-injection)
--   [Available Commands](#available-commands)
-    -   [yalr:install](#yalrinstall)
-    -   [yalr:display](#yalrdisplay)
-    -   [yalr:generate](#yalrgenerate)
-    -   [make:route](#makeroute)
+- [Installation](#installation)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+- [Class Wrapper Route](#class-wrapper-route)
+  - [Creating New Route](#creating-new-route)
+  - [Routes Configuration](#routes-configuration)
+  - [Class Structure](#class-structure)
+  - [Using Controller](#using-controller)
+  - [Route Prefix](#route-prefix)
+  - [Route Name](#route-name)
+- [Preloads](#preloads)
+- [Route Attribute](#route-attribute)
+  - [Available Class Target](#available-class-target)
+  - [Available Method Target](#available-method-target)
+  - [Detailed Attribute Examples](#detailed-attribute-examples)
+- [Auto Controller Injection](#auto-controller-injection)
+- [Available Commands](#available-commands)
+  - [yalr:install](#yalrinstall)
+  - [yalr:display](#yalrdisplay)
+  - [yalr:generate](#yalrgenerate)
+  - [make:route](#makeroute)
 
-### Installation
+## Installation
 
-Using composer :
+Using Composer:
 
 ```shell
 composer require dentro/yalr
 ```
 
-### Requirements
+## Requirements
 
 | Laravel | Yalr | PHP  |
 |---------|------|------|
@@ -54,59 +53,57 @@ composer require dentro/yalr
 | 12.x    | ^1.4 | ^8.2 |
 | 12.x    | ^1.5 | ^8.3 |
 
-### Applying into your project
+## Getting Started
 
-Run command in your project
+After installation, run the following command in your project:
 
 ```shell
 php artisan yalr:install
 ```
 
-### Usage
+## Class Wrapper Route
 
-### Class Wrapper Route
+Class wrapper route is our effort to make routing in Laravel more expressive and organized. Routes are represented by their namespace for easier understanding. For example, class `App\Admin\TransactionRoute` will correspond to the route `/app/admin/transaction`.
 
-Class wrapper route is our effort to make routing in laravel more expressive and separated. We usually make route that
-representative with namespace for easy to understand. For example, class `App\Admin\TransactionRoute` will represent
-route `/app/admin/transaction`.
+### Creating New Route
 
-#### Creating new route
-
-To make a new route just run:
+To create a new route, run:
 
 ```shell
 php artisan make:route DefaultRoute
 ```
 
-After running command above, the route named `DefaultRoute` will appear in `app/Http/Routes/DefaultRoute.php`. After
-creating routes, it will not be loaded automatically, you must register the Route Class in the route configuration.
+This command will create a route named `DefaultRoute` in `app/Http/Routes/DefaultRoute.php`. Note that after creation, you must register the Route class in your route configuration for it to be loaded.
 
-##### make:route options
+#### make:route Options
 
-1. Inject
-   Inject is useful options to auto adding the route class name within route configuration, so you don't need to add it
-   manually. E.g:
+##### 1. Inject
+
+The `--inject` option automatically adds the route class name to your route configuration:
 
 ```shell
 php artisan make:route DefaultRoute --inject web
 ```
 
-Command above will make the Default route within the web groups that defined in `config/routes.php`.
+This command creates the Default route and adds it to the web group defined in `config/routes.php`.
 
-2. Controller
-   The controller option will generate the route and the controller used by the route. So you don't need to run 2 artisan
-   command to create a new controller and route.
+##### 2. Controller
+
+The `--controller` option generates both the route and its associated controller:
 
 ```shell
 php artisan make:route DefaultRoute --controller HomeController
 ```
 
-3. Help
-   Shows YALR command helps
+This eliminates the need to run two separate commands to create a controller and route.
 
-#### Routes Configuration
+##### 3. Help
 
-Below is an example of YALR configurations.
+Shows the YALR command help information.
+
+### Routes Configuration
+
+Here's an example of a YALR configuration file:
 
 ```php
 return [
@@ -137,12 +134,11 @@ return [
 ];
 ```
 
-As you can see, `groups` index is group configuration, you can pass any laravel options there such as `as`, `domain`,
-`middleware`, `prefix`, etc. Afterward, the `web` and `api` are group index defined before in the `groups` index. It is an array of route class names.
+The `groups` section defines group configurations where you can specify Laravel options such as `as`, `domain`, `middleware`, `prefix`, etc. The `web` and `api` sections contain arrays of route class names that belong to these groups.
 
-#### Class Structure
+### Class Structure
 
-After creating a route with the command, we will see the example of the generated file.
+Here's an example of a generated route file:
 
 ```php
 <?php
@@ -153,7 +149,6 @@ use Dentro\Yalr\BaseRoute;
 
 class DefaultRoute extends BaseRoute
 {
-
     /**
      * Register routes handled by this class.
      *
@@ -164,14 +159,13 @@ class DefaultRoute extends BaseRoute
         // Make an awesome route
     }
 }
-
 ```
 
-After creating a route with the command, we will see the example of the generated file. We can define routes within the
-register method. All you need is to call $this->router as a router instance. Then, we can invoke the laravel routing method such as post, put, etc. See
-[Laravel Routing Docs](https://laravel.com/docs/9.x/routing).
+Define routes within the `register` method by calling `$this->router`, which is a router instance. You can invoke Laravel routing methods such as `get`, `post`, `put`, etc. See [Laravel Routing Documentation](https://laravel.com/docs/9.x/routing) for more details.
 
-> Avoid using closure action, otherwise your application will encounter error when routes were cached.
+> **Note:** Avoid using closure actions, as your application will encounter errors when routes are cached.
+
+Example with prefix and name properties:
 
 ```php
 <?php
@@ -182,9 +176,7 @@ use Dentro\Yalr\BaseRoute;
 
 class DefaultRoute extends BaseRoute
 {
-
     protected string $prefix = 'wonderful';
-
     protected string $name = 'wonderful';
 
     /**
@@ -201,10 +193,9 @@ class DefaultRoute extends BaseRoute
 }
 ```
 
-##### Using Controller
+### Using Controller
 
-From create route command, we know we can pass the controller namespace. The created controller will show up in the
-route class as a controller method.
+When creating a route with the controller option, the controller class will be referenced in a controller method:
 
 ```php
 <?php
@@ -240,7 +231,7 @@ class DefaultRoute extends BaseRoute
 }
 ```
 
-The route above is equal with
+This route is equivalent to:
 
 ```php
 Route::get('/', [
@@ -248,15 +239,21 @@ Route::get('/', [
 ]);
 ```
 
-This package want to solve those duplicated namespace and class name several times as we define the routes.
-Or if you don't want to use the controller in the route class, you can pass the second parameter of `$this->uses()`
-method with the controller class name to be used, E.g : `$this->uses('login', LoginController::class)`.
+This package helps eliminate duplicate namespace and class name references in your route definitions. If you want to use a different controller than the one specified in the `controller()` method, you can pass the controller class as the second parameter of `$this->uses()`:
 
-##### Route Prefix
+```php
+$this->uses('login', LoginController::class)
+```
 
-Override the route prefix defined in the class property. Default prefix is '/';
+### Route Prefix
 
-> `protected string $prefix = '/home';`
+You can override the default prefix (which is '/') by defining it in your class property:
+
+```php
+protected string $prefix = '/home';
+```
+
+Then use it in your routes:
 
 ```php
 $this->router->get($this->prefix(), [
@@ -264,7 +261,7 @@ $this->router->get($this->prefix(), [
 ]);
 ```
 
-The route above is equal with
+This is equivalent to:
 
 ```php
 Route::get('/home', [
@@ -272,14 +269,15 @@ Route::get('/home', [
 ]);
 ```
 
-##### Route Name
+### Route Name
 
-You need to define the route name property within the route class
+Define a route name property in your route class:
 
-> `protected string $name = 'home';`
+```php
+protected string $name = 'home';
+```
 
-Later we can use `$this->name()` method for adding separation with dot (.) between the route group name, and the single
-route name
+Then use the `$this->name()` method, which adds a dot (.) between the route group name and the individual route name:
 
 ```php
 $this->router->get('/', [
@@ -288,7 +286,7 @@ $this->router->get('/', [
 ]);
 ```
 
-It equal with
+This is equivalent to:
 
 ```php
 Route::get('/', [
@@ -297,9 +295,9 @@ Route::get('/', [
 ]);
 ```
 
-### Preloads
+## Preloads
 
-Preloads always run even though routes been cached. It might be the good place to put route model binding and rate limiter there.<br> Example :
+Preloads always run even when routes are cached. They're an ideal place for route model binding and rate limiters:
 
 ```php
 // config/routes.php
@@ -349,9 +347,9 @@ class RouteRateLimiter implements Bindable
 }
 ```
 
-### Route Attribute
+## Route Attribute
 
-PHP 8 comes up with a nice feature called `Attribute` see [this link](https://www.php.net/releases/8.0/en.php#attributes) for the detail. So we added those feature to this package for us to create something like the example below.
+PHP 8 introduced a feature called Attributes (see [PHP 8 Attributes](https://www.php.net/releases/8.0/en.php#attributes)). YALR leverages this feature to enable more elegant route definitions:
 
 ```php
 #[Middleware(['auth:sanctum', 'verified'])]
@@ -365,7 +363,7 @@ class DashboardController extends Controller
 }
 ```
 
-#### Available Class Target
+### Available Class Target
 
 ```php
 Dentro\Yalr\Attributes\Domain(string $domain);
@@ -374,7 +372,7 @@ Dentro\Yalr\Attributes\Name(string $name, bool $dotPrefix = false, bool $dotSuff
 Dentro\Yalr\Attributes\Middleware(string | array $middleware);
 ```
 
-#### Available Method Target
+### Available Method Target
 
 ```php
 Dentro\Yalr\Attributes\Get(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
@@ -385,9 +383,9 @@ Dentro\Yalr\Attributes\Delete(string $uri, ?string $name = null, array | string 
 Dentro\Yalr\Attributes\Options(string $uri, ?string $name = null, array | string $middleware = [], array | string $withoutMiddleware = []);
 ```
 
-#### Detailed Attribute Examples
+### Detailed Attribute Examples
 
-##### Basic Controller with Multiple Routes
+#### Basic Controller with Multiple Routes
 
 ```php
 <?php
@@ -466,7 +464,7 @@ class UserController extends Controller
 }
 ```
 
-##### Controller with Middleware
+#### Controller with Middleware
 
 ```php
 <?php
@@ -520,7 +518,7 @@ class DashboardController extends Controller
 }
 ```
 
-##### API Controller Example
+#### API Controller Example
 
 ```php
 <?php
@@ -587,27 +585,27 @@ class PostController extends Controller
 }
 ```
 
-#### Added To Configuration Route
+### Adding Controllers to Route Configuration
 
-just put class to your route configuration and yalr will figure it out what to do with your controller.
+Simply add controller classes to your route configuration, and YALR will determine how to handle them:
 
 ```php
-    'web' => [
-        /** @inject web **/
-        \App\Http\Routes\DefaultRoute::class,
-        \App\Http\Controllers\UserController::class,
-    ],
-    'api' => [
-        /** @inject api **/
-        \App\Http\Controllers\Api\PostController::class,
-    ],
+'web' => [
+    /** @inject web **/
+    \App\Http\Routes\DefaultRoute::class,
+    \App\Http\Controllers\UserController::class,
+],
+'api' => [
+    /** @inject api **/
+    \App\Http\Controllers\Api\PostController::class,
+],
 ```
 
-### Auto Controller Injection
+## Auto Injection
 
-YALR provides automatic controller injection functionality through the configuration file. This feature allows you to specify directories where your controllers are located, and YALR will automatically scan and inject them into your routes.
+YALR provides automatic class injection through the configuration file. You can specify directories containing either your controllers with PHP 8 attributes or your route wrapper classes, and YALR will scan and inject them into your routes configuration.
 
-To use this feature, configure the `injects` section in your `config/routes.php`:
+Configure the `injects` section in `config/routes.php`:
 
 ```php
 'injects' => [
@@ -621,28 +619,27 @@ You can specify multiple directories for each group:
 ```php
 'injects' => [
     'web' => [
-        'app/Http/Controllers/Web/',
+        'app/Http/Controllers/Web/',      // For controllers with attributes
+        'app/Http/Routes/Web/',           // For route wrapper classes
         'app/Http/Controllers/Admin/'
     ],
     'api' => 'app/Http/Controllers/Api/' // Single directory can be a string
 ],
 ```
 
-To generate routes based on your controller structure, run:
+> **Note:** The directory scan is not recursive. YALR will only read files in the specified directories and won't search within their subdirectories.
+
+To generate routes based on your class structure, run:
 
 ```shell
 php artisan yalr:generate
 ```
 
-This will scan the directories specified in the `injects` configuration and add the discovered controllers to their respective route groups.
-
 ## Available Commands
-
-YALR provides several helpful commands to simplify working with class-based routes and controller attribute routing.
 
 ### yalr:install
 
-Installs YALR into your Laravel project by publishing the necessary configuration files.
+Installs YALR into your Laravel project by publishing the necessary configuration files:
 
 ```shell
 php artisan yalr:install
@@ -650,94 +647,36 @@ php artisan yalr:install
 
 #### Options:
 
--   `--transform`: Transform existing Laravel route files to YALR format
+- `--transform`: Transform existing Laravel route files to YALR format
+- `--backup`: Create backups of original route files when transforming
 
-    ```shell
-    php artisan yalr:install --transform
-    ```
-
--   `--backup`: Create backup of original route files when transforming
-    ```shell
-    php artisan yalr:install --transform --backup
-    ```
-
-When using the `--transform` option, YALR will:
+When using `--transform`, YALR will:
 
 1. Scan your `routes` directory for traditional Laravel route files
 2. Convert Route facade calls to YALR class-based format
 3. Store the new route classes in `app/Http/Routes` directory
-4. Preserve middleware, prefixes and other route configurations
+4. Preserve middleware, prefixes, and other route configurations
 5. Create backups of original files with `.bak` extension if `--backup` is specified
 
 ### yalr:display
 
-Displays all registered routes grouped by their configuration sections to help you visualize your route organization.
+Displays all registered routes grouped by their configuration sections:
 
 ```shell
 php artisan yalr:display
 ```
 
-Example output:
-
-```
-+----------------------------------+------+
-| Route Class                      | Group |
-+----------------------------------+------+
-| \App\Http\Routes\WebRoutes       | web  |
-| \App\Http\Routes\AuthRoutes      | web  |
-| \App\Http\Controllers\UserController | web  |
-| \App\Http\Routes\ApiRoutes       | api  |
-| \App\Http\Controllers\Api\PostController | api  |
-+----------------------------------+------+
-```
-
-This is particularly useful when debugging route registrations or checking which controllers are being registered as routes.
-
 ### yalr:generate
 
-Scans controller directories specified in the `injects` configuration and automatically adds them to the appropriate route groups. This is useful for automatic controller discovery and registration.
+Scans controller directories specified in the `injects` configuration and automatically adds them to the appropriate route groups:
 
 ```shell
 php artisan yalr:generate
 ```
 
-This command:
-
-1. Reads the `injects` configuration from your routes config file
-2. Scans each specified directory for controller classes
-3. Adds discovered controller classes to their respective route groups
-4. Preserves existing routes and only adds new controllers
-
-Example workflow:
-
-1. Set up directories to scan in your `config/routes.php`:
-    ```php
-    'injects' => [
-        'web' => ['app/Http/Controllers/Web/', 'app/Http/Controllers/Admin/'],
-        'api' => 'app/Http/Controllers/Api/'
-    ]
-    ```
-2. Create controllers with route attributes in those directories
-3. Run `php artisan yalr:generate` to automatically register them
-
-The command outputs detailed information about the scanning process:
-
-```
-Scanning directory for 'web' group: app/Http/Controllers/Web/
-Found 3 controller class(es) in app/Http/Controllers/Web/
-Added \App\Http\Controllers\Web\UserController::class to 'web' group
-Added \App\Http\Controllers\Web\ProductController::class to 'web' group
-Added \App\Http\Controllers\Web\OrderController::class to 'web' group
-Scanning directory for 'api' group: app/Http/Controllers/Api/
-Found 2 controller class(es) in app/Http/Controllers/Api/
-Added \App\Http\Controllers\Api\UserController::class to 'api' group
-Added \App\Http\Controllers\Api\ProductController::class to 'api' group
-Successfully injected 5 controller(s) into route groups.
-```
-
 ### make:route
 
-Creates a new route class with optional controller generation and route injection.
+Creates a new route class with optional controller generation and route injection:
 
 ```shell
 # Basic usage
@@ -746,84 +685,7 @@ php artisan make:route UserRoute
 
 #### Options:
 
--   `--controller` or `-c`: Generate a controller to accompany the route class
-
-    ```shell
-    php artisan make:route UserRoute --controller
-    ```
-
-    This will create both `app/Http/Routes/UserRoute.php` and `app/Http/Controllers/UserController.php`
-
--   `--inject` or `-j`: Automatically inject the route class into the specified route group
-    ```shell
-    php artisan make:route UserRoute --inject web
-    ```
-    This adds `\App\Http\Routes\UserRoute::class` to the `web` group in your routes config file
-
-You can combine both options:
-
-```shell
-php artisan make:route AdminDashboardRoute --controller --inject admin
-```
-
-The generated route will be placed in `app/Http/Routes` by default and follows this structure:
-
-```php
-<?php
-
-namespace App\Http\Routes;
-
-use Dentro\Yalr\BaseRoute;
-
-class UserRoute extends BaseRoute
-{
-    /**
-     * Register routes handled by this class.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        // Define your routes here
-        $this->router->get('users', function () {
-            // Route implementation
-        });
-    }
-}
-```
-
-When the `--controller` option is used, the route class will include controller integration:
-
-```php
-<?php
-
-namespace App\Http\Routes;
-
-use Dentro\Yalr\BaseRoute;
-use App\Http\Controllers\UserController;
-
-class UserRoute extends BaseRoute
-{
-    /**
-     * Register routes handled by this class.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        $this->router->get('users', [
-            'uses' => $this->uses('index')
-        ]);
-    }
-
-    /**
-     * Controller used by this route.
-     *
-     * @return string
-     */
-    public function controller(): string
-    {
-        return UserController::class;
-    }
-}
-```
+- `--controller` or `-c`: Generate a controller to accompany the route class
+- `--inject` or `-j`: Automatically inject the route class into the specified route group
+`
+`
