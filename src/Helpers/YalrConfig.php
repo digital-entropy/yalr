@@ -8,7 +8,6 @@ use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PhpVersion;
-use PhpParser\PrettyPrinter;
 
 class YalrConfig
 {
@@ -198,10 +197,10 @@ class YalrConfig
             throw new \RuntimeException("YalrConfig: Could not read config file at $config_file");
         }
 
-        // It's slightly more efficient to reuse the parser if making multiple calls,
-        // but for static methods, creating it each time is simpler.
-        $parser = (new ParserFactory)->createForVersion(PhpVersion::fromString('8.0.0'));
-        $ast = $parser->parse($content); // Removed preserveComments for potentially cleaner output
+        $parserFactory = new ParserFactory();
+        $parser = $parserFactory->createForVersion(PhpVersion::fromString('8.3.0'));
+
+        $ast = $parser->parse($content);
 
         if (!$ast) {
             throw new \RuntimeException("YalrConfig: Failed to parse config file AST at {$config_file}");
@@ -220,14 +219,9 @@ class YalrConfig
      */
     private static function writeAstToFile(array $ast, string $filePath): bool
     {
-        $prettyPrinter = new PrettyPrinter\Standard();
+        $prettyPrinter = new YalrConfig\CustomPrettyPrinter();
+
         $newContent = $prettyPrinter->prettyPrintFile($ast);
-
-        // Add a newline at the end if the printer doesn't
-        if (!str_ends_with($newContent, "\n")) {
-            $newContent .= "\n";
-        }
-
         $result = file_put_contents($filePath, $newContent);
 
         if ($result === false) {

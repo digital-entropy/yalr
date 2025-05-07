@@ -12,14 +12,15 @@ use Illuminate\Support\Collection;
 
 class AddRouteVisitor extends AbstractRouteVisitor
 {
-    private string $routeToAdd;
     private bool $groupFound = false;
     private bool $routeAdded = false;
 
-    public function __construct(string $targetGroup, string $routeToAdd)
+    public function __construct(
+        string $targetGroup,
+        private readonly string $routeToAdd,
+    )
     {
         parent::__construct($targetGroup);
-        $this->routeToAdd = $routeToAdd;
     }
 
     public function leaveNode(Node $node): ?Node
@@ -80,7 +81,18 @@ class AddRouteVisitor extends AbstractRouteVisitor
                             return false;
                         });
 
-                        if (! $isDuplicate) {
+                        if (!$isDuplicate) {
+                            // Preserve any comments from existing items
+                            if (!empty($item->value->items)) {
+                                $lastItem = end($item->value->items);
+                                $comments = $lastItem->getAttribute('comments');
+                                if ($comments) {
+                                    // Transfer comments to the new route
+                                    $newRoute->setAttribute('comments', $comments);
+                                }
+                            }
+
+                            // Add the new route to the array items
                             $item->value->items[] = $newRoute;
                             $this->routeAdded = true;
                         }
