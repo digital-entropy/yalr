@@ -27,7 +27,7 @@ Previously known as [jalameta/router](https://github.com/jalameta/jps-router).
   - [Available Class Target](#available-class-target)
   - [Available Method Target](#available-method-target)
   - [Detailed Attribute Examples](#detailed-attribute-examples)
-- [Auto Controller Injection](#auto-controller-injection)
+- [Auto Controller Injection](#auto-injection)
 - [Available Commands](#available-commands)
   - [yalr:install](#yalrinstall)
   - [yalr:display](#yalrdisplay)
@@ -119,17 +119,16 @@ return [
     ],
 
     'web' => [
-        /** @inject web **/
         \App\Http\Routes\DefaultRoute::class,
     ],
     'api' => [
-        /** @inject api **/
+        // 
     ],
 
     // Auto-injection configuration for yalr:generate command
     'injects' => [
-        'web' => ['app/Controllers/Web/'],
-        'api' => ['app/Controllers/Api/']
+        'web' => ['app/Http/Controllers/Web/'],
+        'api' => ['app/Http/Controllers/Api/']
     ],
 ];
 ```
@@ -591,12 +590,10 @@ Simply add controller classes to your route configuration, and YALR will determi
 
 ```php
 'web' => [
-    /** @inject web **/
     \App\Http\Routes\DefaultRoute::class,
     \App\Http\Controllers\UserController::class,
 ],
 'api' => [
-    /** @inject api **/
     \App\Http\Controllers\Api\PostController::class,
 ],
 ```
