@@ -89,10 +89,10 @@ This command creates the Default route and adds it to the web group defined in `
 
 ##### 2. Controller
 
-The `--controller` option generates both the route and its associated controller:
+The `--controller` option generates both the route and its associated controller with the same name:
 
 ```shell
-php artisan make:route DefaultRoute --controller HomeController
+php artisan make:route DefaultRoute --controller
 ```
 
 This eliminates the need to run two separate commands to create a controller and route.
