@@ -7,7 +7,6 @@ use Dentro\Yalr\Tests\Routes\BinderRoute;
 
 class PreloadsTest extends TestCase
 {
-
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('routes.preloads', [
@@ -23,7 +22,7 @@ class PreloadsTest extends TestCase
 
         $this->cacheRoute();
 
-        $this->assertRegisteredRoutesCount(6); // 5 + 1 (from FilesystemServiceProvider::serveFiles())
+        $this->assertRegisteredRoutesCount(5);
         // inside cache route
         self::assertTrue($this->app->routesAreCached());
 
@@ -36,7 +35,7 @@ class PreloadsTest extends TestCase
             ->make(groupName: 'foo', items: [GetTestController::class])
             ->register();
 
-        $this->assertRegisteredRoutesCount(6); // 5 + 1 (from FilesystemServiceProvider::serveFiles())
+        $this->assertRegisteredRoutesCount(5);
         self::assertNotTrue($this->app->routesAreCached());
 
         self::assertNotNull($this->getRouter()->getBindingCallback('user'));

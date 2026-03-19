@@ -3,9 +3,8 @@
 namespace Dentro\Yalr\Tests;
 
 use Closure;
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Dentro\Yalr\RouterFactory;
+use Dentro\Yalr\YalrServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemServiceProvider;
 use Illuminate\Routing\CompiledRouteCollection;
@@ -13,8 +12,6 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
-use Dentro\Yalr\RouterFactory;
-use Dentro\Yalr\YalrServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -33,12 +30,7 @@ class TestCase extends Orchestra
      */
     protected function mockRouterFactory(): void
     {
-        // Modern way to mock static functionality
-        if (method_exists(RouterFactory::class, 'fake')) {
-            RouterFactory::fake();
-        } elseif (method_exists(RouterFactory::class, 'shouldReceive')) {
-            RouterFactory::shouldReceive('create')->andReturnUsing(fn(): \Dentro\Yalr\RouterFactory => new RouterFactory());
-        }
+        RouterFactory::fake();
     }
 
     protected function getPackageProviders($app): array
@@ -48,9 +40,9 @@ class TestCase extends Orchestra
         ];
     }
 
-    public function getTestPath(string|null $directory = null): string
+    public function getTestPath(?string $directory = null): string
     {
-        return __DIR__ . ($directory ? '/' . $directory : '');
+        return __DIR__.($directory ? '/'.$directory : '');
     }
 
     public function assertRegisteredRoutesCount(int $expectedNumber): self
@@ -65,11 +57,11 @@ class TestCase extends Orchestra
     public function assertRouteRegistered(
         string $httpMethod = 'get',
         string $uri = 'my-method',
-        string|null $controller = null,
+        ?string $controller = null,
         string $controllerMethod = 'myMethod',
-        string|null $name = null,
-        string|null $domain = null,
-        string | array $middleware = [],
+        ?string $name = null,
+        ?string $domain = null,
+        string|array $middleware = [],
     ): self {
         if (! \is_array($middleware)) {
             $middleware = Arr::wrap($middleware);
@@ -77,7 +69,7 @@ class TestCase extends Orchestra
 
         $routeRegistered = collect($this->getRouteCollection()->getRoutes())
             ->contains(static function (Route $route) use ($name, $middleware, $controllerMethod, $controller, $uri, $httpMethod, $domain): bool {
-                if (!\in_array(strtoupper($httpMethod), $route->methods, true)) {
+                if (! \in_array(strtoupper($httpMethod), $route->methods, true)) {
                     return false;
                 }
 
@@ -95,7 +87,6 @@ class TestCase extends Orchestra
                     }
                 }
 
-
                 if (array_diff($route->middleware(), $middleware)) {
                     return false;
                 }
@@ -103,6 +94,7 @@ class TestCase extends Orchestra
                 if ($route->getName() !== $name) {
                     return false;
                 }
+
                 return $route->getDomain() === $domain;
             });
 
@@ -130,7 +122,7 @@ class TestCase extends Orchestra
         /**
          * @see FilesystemServiceProvider::serveFiles()
          * This method will disturb the caching route because it has a closure action.
-         * The generated route at ...bootstrap/cache/routes-v7.php will be broken
+         * The generated route cache file will be broken
          * and generate something like \Closure::__set_state()
          */
 
@@ -144,17 +136,17 @@ class TestCase extends Orchestra
             $this->app->getCachedRoutesPath(), $content,
         );
 
-        self::assertTrue(
-            $files->exists(base_path('bootstrap/cache/routes-v7.php'))
-        );
+        self::assertTrue($files->exists($this->app->getCachedRoutesPath()));
 
         if ($this->app !== null) {
             $this->reloadApplication();
         }
 
-        $this->beforeApplicationDestroyed(static function () use ($files): void {
+        $cachedRoutesPath = $this->app->getCachedRoutesPath();
+
+        $this->beforeApplicationDestroyed(static function () use ($files, $cachedRoutesPath): void {
             $files->delete(
-                base_path('bootstrap/cache/routes-v7.php'),
+                $cachedRoutesPath,
                 ...$files->glob(base_path('routes/testbench-*.php'))
             );
 
@@ -172,7 +164,7 @@ class TestCase extends Orchestra
      */
     protected function sanitizeClosure(CompiledRouteCollection|RouteCollection $routes): RouteCollection
     {
-        $filteredRoutes = new RouteCollection();
+        $filteredRoutes = new RouteCollection;
 
         foreach ($routes->getRoutes() as $route) {
             if ($route->getAction('uses') instanceof Closure) {

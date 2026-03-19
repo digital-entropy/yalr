@@ -62,7 +62,7 @@ PHP;
         parent::tearDown();
     }
 
-    public function testCommandScansAndInjectsControllers(): void
+    public function test_command_scans_and_injects_controllers(): void
     {
         // Create a regular mock for the ControllerScanner
         $scannerMock = Mockery::mock(ControllerScanner::class);
@@ -77,7 +77,7 @@ PHP;
         $command = $this->createPartialMock(GenerateCommand::class, [
             'getControllerScanner',
             'getConfigPath',
-            'addToConfig'
+            'addToConfig',
         ]);
 
         $command->method('getControllerScanner')->willReturn($scannerMock);
@@ -85,17 +85,15 @@ PHP;
         $command->method('addToConfig')->willReturn(true);
 
         // Set up Laravel-style console testing
-        $output = new BufferedOutput();
+        $output = new BufferedOutput;
         $input = new ArrayInput([]);
 
         // Get the command's console instance reflection
         $reflection = new \ReflectionClass($command);
         $outputProp = $reflection->getProperty('output');
-        $outputProp->setAccessible(true);
         $outputProp->setValue($command, $output);
 
         $inputProp = $reflection->getProperty('input');
-        $inputProp->setAccessible(true);
         $inputProp->setValue($command, $input);
 
         // Run the command
@@ -112,10 +110,10 @@ PHP;
         $this->assertStringContainsString("Scanning directory for 'api' group", $outputContent);
 
         // Check injection success messages
-        $this->assertStringContainsString("Successfully injected", $outputContent);
+        $this->assertStringContainsString('Successfully injected', $outputContent);
     }
 
-    public function testCommandHandlesMultipleDirectoriesPerGroup(): void
+    public function test_command_handles_multiple_directories_per_group(): void
     {
         // Create a config with multiple directories per group
         $multiDirectoryConfig = tempnam(sys_get_temp_dir(), 'yalrtest_multi_').'.php';
@@ -148,7 +146,7 @@ PHP;
         $command = $this->createPartialMock(GenerateCommand::class, [
             'getControllerScanner',
             'getConfigPath',
-            'addToConfig'
+            'addToConfig',
         ]);
 
         $command->method('getControllerScanner')->willReturn($scannerMock);
@@ -156,14 +154,12 @@ PHP;
         $command->method('addToConfig')->willReturn(true);
 
         // Set up output capture
-        $output = new BufferedOutput();
+        $output = new BufferedOutput;
         $reflection = new \ReflectionClass($command);
         $outputProp = $reflection->getProperty('output');
-        $outputProp->setAccessible(true);
         $outputProp->setValue($command, $output);
 
         $inputProp = $reflection->getProperty('input');
-        $inputProp->setAccessible(true);
         $inputProp->setValue($command, new ArrayInput([]));
 
         // Run the command
@@ -172,9 +168,9 @@ PHP;
 
         // Verify it processed all directories
         $this->assertEquals(0, $result);
-        $this->assertStringContainsString("app/Controllers/Web/", $outputContent);
-        $this->assertStringContainsString("app/Controllers/Admin/", $outputContent);
-        $this->assertStringContainsString("app/Controllers/Api/", $outputContent);
+        $this->assertStringContainsString('app/Controllers/Web/', $outputContent);
+        $this->assertStringContainsString('app/Controllers/Admin/', $outputContent);
+        $this->assertStringContainsString('app/Controllers/Api/', $outputContent);
 
         // Clean up
         if (file_exists($multiDirectoryConfig)) {

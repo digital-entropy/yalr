@@ -3,6 +3,7 @@
 namespace Dentro\Yalr;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as BaseRouteServiceProvider;
 
 /**
@@ -37,7 +38,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
             __DIR__.'/../config/routes.php', 'routes'
         );
 
-        $this->app->singleton(RouterFactory::SERVICE_NAME, static fn(): \Dentro\Yalr\RouterFactory => new RouterFactory(static fn (): array => [
+        $this->app->singleton(RouterFactory::SERVICE_NAME, static fn (): RouterFactory => new RouterFactory(static fn (): array => [
             Container::getInstance()['config'],
             Container::getInstance()['router'],
         ]));
@@ -61,7 +62,7 @@ class YalrServiceProvider extends BaseRouteServiceProvider
     protected function loadCachedRoutes(): void
     {
         $this->app->booted(function (): void {
-            /** @var \Dentro\Yalr\RouterFactory $routerFactory */
+            /** @var RouterFactory $routerFactory */
             $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
             $routerFactory->registerPreloads();
         });
@@ -72,12 +73,12 @@ class YalrServiceProvider extends BaseRouteServiceProvider
     /**
      * Load the application routes.
      *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException|\ReflectionException
+     * @throws BindingResolutionException|\ReflectionException
      */
     #[\Override]
     protected function loadRoutes(): void
     {
-        /** @var \Dentro\Yalr\RouterFactory $routerFactory */
+        /** @var RouterFactory $routerFactory */
         $routerFactory = $this->app->make(RouterFactory::SERVICE_NAME);
         $routerFactory->registerPreloads();
         if (! RouterFactory::$fake) {

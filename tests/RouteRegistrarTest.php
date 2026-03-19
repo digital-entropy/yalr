@@ -13,7 +13,7 @@ class RouteRegistrarTest extends TestCase
             ->make(groupName: 'foo', items: [SimpleRoute::class])
             ->register();
 
-        $this->assertRegisteredRoutesCount(2); // 1 + 1 (from FilesystemServiceProvider::serveFiles())
+        $this->assertRegisteredRoutesCount(1);
         $this->assertRouteRegistered(uri: 'foo', name: 'foo');
     }
 
@@ -23,7 +23,7 @@ class RouteRegistrarTest extends TestCase
             ->make(groupName: 'foo', items: [GetTestController::class])
             ->register();
 
-        $this->assertRegisteredRoutesCount(6); // 5 + 1 (from FilesystemServiceProvider::serveFiles())
+        $this->assertRegisteredRoutesCount(5);
         $this->assertRouteRegistered(
             uri: 'test',
             controller: GetTestController::class,
